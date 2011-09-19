@@ -31,6 +31,7 @@ class Report extends Report_base {
 		$this->load->model('posts_model', 'posts');
 		$this->load->model('ranks_model', 'ranks');
 		$this->load->model('news_model', 'news');
+		$this->load->model('users_model', 'user');
 
 		$data['images']['loading'] = array(
 			'src' => img_location('loading-bar.gif', $this->skin, 'admin'),
@@ -190,7 +191,7 @@ class Report extends Report_base {
 									$delete = $this->awe->delete_saved_report($id);
 									
 									if ($delete > 0) {
-										$message = 'Report deleted successfully.';
+										$message = 'Report deleted successfully. Please wait to be redirected...';
 	
 										$flash['status'] = 'success';
 										$flash['message'] = text_output($message);
@@ -202,12 +203,12 @@ class Report extends Report_base {
 									}
 									
 									
-/*								} else {								{
+								} else {								
 									//this is a published report
 									$message = 'Cannot delete published report.';
 									$flash['status'] = 'еrror';
 									$flash['message'] = text_output($message);	
-*/
+
 								} 
 					
 								/* add an automatic redirect */
@@ -462,10 +463,21 @@ class Report extends Report_base {
 				$sReports = array();
 				if ($savedReports->num_rows() > 0) {
 					foreach ($savedReports->result() as $row) {
+						$author_id = 0;
+						$author = $this->user->get_user($row->report_author);
+						if ($author!==FALSE) {
+							$author_id = $author->name;
+						}
+						$sel = '';
+						if ($id == $row->report_id) {
+							$sel='selected';
+						}
 						$sReports[$row->report_id] = array(
 										   'id' => $row->report_id,
-										   'dateStart' => $row->report_date_start,
-										   'dateEnd' => $row->report_date_end
+										   'dateStart' =>  date('n/j/Y',$row->report_date_start),
+										   'dateEnd' =>  date('n/j/Y',$row->report_date_end),
+										   'author' => $author_id,
+										   'selected' => $sel
 										  );
 					}
 				}

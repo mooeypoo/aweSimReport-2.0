@@ -469,7 +469,7 @@ class Ajax extends Ajax_base {
 
 	} /* end awe_save_report */
 
-
+/*
 	function awe_report_save() {
 		if (IS_AJAX) {
 			//custom sections:
@@ -494,7 +494,7 @@ class Ajax extends Ajax_base {
 			);
 
 										
-			/* insert the record */
+			/* insert the record 
 			$insert = $this->awe->save_report($update_array);
 										
 			if ($insert > 0) {
@@ -505,8 +505,25 @@ class Ajax extends Ajax_base {
 			echo $message;
 			
 		}
-	}
+	}*/
 	
+	function awe_tooltip_saved_report() {
+		if (IS_AJAX) {
+			/* load the resources */
+			$this->load->model('awesimreport_model', 'awe');
+			//custom sections:
+			$reportID = (is_numeric($this->uri->segment(3))) ? $this->uri->segment(3) : 0;
+/*			$id = (int)($this->input->post('id')); */
+			$report = $this->awe->get_saved_report_details($reportID);
+			if ($report !== FALSE) {
+				print '<strong>'.$report->report_id.'</strong>';
+			} else {
+				print 'ERROR. Please refresh the page.';
+			}
+			
+		}
+		
+	} //end awe_tooltip_saved_report
 	
 	/*== END AWESIMREPORT FUNCS ==*/
 	

@@ -176,17 +176,20 @@ form label {
 #awe_footer a:hover { color: d9faff; }
 
 #savedReports {
-	width: 90%;
+	width: 100%;
 	margin-left: auto;
 	margin-right: auto;
 	display: inline-block;
 	color: #ffffff;
 }
 
-.savedreport {
+a.savedreport {
+	text-align: center;
+	font-size: 90%;
 	color: #ffffff;
+	text-decoration: none;
 	float: left;
-	width: 140px;
+	width: 100px;
 	margin: 5px;
 	padding: 2px;
 	border: 1px solid #0A1C2B;
@@ -207,5 +210,39 @@ form label {
 					center top,
 					#102C45 20%,
 					#0A1C2B 100%
+				);	
+}
+a.savedreport:hover {
+	text-align: center;
+	font-size: 90%;
+	text-decoration: none;
+	background: -webkit-gradient(
+					linear,
+					left top,
+					left bottom,
+					color-stop(.2, #093961),
+					color-stop(1, #032B4D)
+				);
+	background: -moz-linear-gradient(
+					center top,
+					#093961 20%,
+					#032B4D 100%
+				);	
+}
+a.savedreport.selected {
+	border: #3B0412;
+	/*Background*/
+	background: #3B0412; /*Fallback*/
+	background: -webkit-gradient(
+					linear,
+					left top,
+					left bottom,
+					color-stop(.2, #4D0B1B),
+					color-stop(1, #3B0412)
+				);
+	background: -moz-linear-gradient(
+					center top,
+					#4D0B1B 20%,
+					#3B0412 100%
 				);	
 }

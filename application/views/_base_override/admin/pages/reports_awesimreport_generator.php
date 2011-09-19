@@ -32,26 +32,28 @@
 <div id="saving" class="hidden"><?php echo img($images['loading']);?><?php echo 'Processing...';?>...</div>
 <div id='ajaxnotice' class='hidden'></div>
 
-	<?php print_r($debug['chkShowUsers']); ?><br />
-<?php /*
-<hr>
-	<?php print_r($debug['chkShowUsers']); ?><br />
-	<?php //print $debug['action']; ?>
-<hr> */ ?>
 <br />
 	<?php //print_r($savedReports); ?>
 	<div id='savedReports'>
 <?php	if (count($savedReports)>0) {
-		foreach ($savedReports as $key => $val) { ?>
-			<div id="report_<?php echo $key; ?>" class='savedreport'><?php echo anchor('report/awesimreport/generator/'. $key, 'Saved Report '.$key);?><br />
-			<span style="font-size: 80%;"><?php echo date('n/j/Y',$val['dateStart']).'-'.date('n/j/Y',$val['dateEnd']) ?></span></div>
+		foreach ($savedReports as $key => $val) {
+			$class='savedreport';
+			if ($val['selected']=='selected') { $class='savedreport selected'; }
+			?>
+				<a href="<?php print base_url(); ?>index.php/report/awesimreport/generator/<?php echo $key; ?>" class="<?php print $class; ?>" myid="<?php echo $key; ?>" myauthor="<?php echo $val['author']?>" mydates="<?php echo $val['dateStart'].'-'.$val['dateEnd']; ?>">
+					Report <?php print $key; ?>
+				</a>
+<?php /* ?>
+			<div id="report" class="<?php print $class; ?>" myID="<?php echo $key; ?>">
+				<?php echo anchor('report/awesimreport/generator/'. $key, 'Saved Report '.$key);?><br />
+			<span style="font-size: 80%;"><?php echo date('n/j/Y',$val['dateStart']).'-'.date('n/j/Y',$val['dateEnd']) ?></span>
+			</div> */ ?>
 <?php
 		}
 	}  ?>
 	</div>
 <hr>
 <br />
-<?php //echo form_open('report/awesimreport/generator/'.$reportid, $inputs['formAttributes']);?>
 <?php 	if ($this->uri->segment(4) !== FALSE) { 
 		echo form_open('report/awesimreport/generator/'.$this->uri->segment(4), $inputs['formAttributes']);
 	} else { 
@@ -87,7 +89,7 @@
 					</tr>
 <?php 				if ($roster['UseTags'] == 'checked') { ?>					
 					<tr>
-						<th class="fontTiny nobold" colspan="4"></th>
+						<th colspan="3">&nbsp;</th>
 						<th class="fontTiny nobold"><?php print $roster['Unexcused']; ?></th>
 						<th class="fontTiny nobold"><?php print $roster['Excused']; ?></th>
 						<th class="fontTiny nobold"><?php print $roster['Present']; ?></th>
@@ -127,7 +129,8 @@
 								<?php		if (($char['loa'] == '[LOA]') || ($char['loa'] == '[ELOA]')) { ?>
 											<td align="center" valign="middle" colspan="3"><?php print $char['loa']; ?></td>
 								<?php		} else { ?>
-											<td align="center" valign="middle"><?php echo form_radio($radAttendance[$char['charid']]['U']); ?></td>
+
+       											<td align="center" valign="middle"><?php echo form_radio($radAttendance[$char['charid']]['U']); ?></td>
 											<td align="center" valign="middle"><?php echo form_radio($radAttendance[$char['charid']]['E']); ?></td>
 											<td align="center" valign="middle"><?php echo form_radio($radAttendance[$char['charid']]['P']); ?></td>
 								<?php		}	?>									
