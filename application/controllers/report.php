@@ -179,6 +179,10 @@ class Report extends Report_base {
 								$flash['message'] = text_output($message);
 							}
 							break; //update
+						case 'preview report':
+							
+							
+							break; //generate
 						case 'generate report':
 							break; //generate
 						case 'delete saved report':
@@ -272,8 +276,9 @@ class Report extends Report_base {
 					'preview' => array(
 						'type' => 'submit',
 						'class' => 'button-sec',
-						'name' => 'submit',
+						'name' => 'preview',
 						'value' => 'preview',
+						'id' => 'preview',
 						'content' => ucwords('Preview Report')),
 					'save' => array(
 						'type' => 'submit',

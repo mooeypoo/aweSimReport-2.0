@@ -5,7 +5,7 @@
 			      </tr>
 				  	<tr>
 				        <td align="left" colspan="5" style="height: 4px; font-size: 0px;" height="4">
-						<img src="images/bg_divider.png" alt="divider">
+						<img src="%%images%%/bg_divider.png" alt="divider">
 				      </td>
 				     </tr>
 			      

@@ -97,6 +97,16 @@ class Awesimreport_model extends Model {
 			return false;
 		}
 	}
+
+	function get_template_details($id = 0) {
+		$query = $this->db->get_where('awe_templates', array('template_id' => $id));
+		if ($query->num_rows() > 0) {
+			$row = $query->row();
+			return $row;
+		}
+		return FALSE;
+	}
+
 	
 
 	function get_saved_reports($status ='active') {
@@ -108,6 +118,67 @@ class Awesimreport_model extends Model {
 		}
 	}
 	
+	function get_template_content($id = 0){
+		$this->load->helper('file');
+		$template = $this->get_template_details($id);
+		if ($template !== FALSE) {
+			$tpath = APPPATH.'assets/aweSimReportTemplates/'.$template->template_folder;
+			$tmpl['header'] = read_file($tpath.'/header.php');
+			$tmpl['section_title'] = read_file($tpath.'/section_title.php');
+			$tmpl['section_content'] = read_file($tpath.'/section_content.php');
+			$tmpl['footer'] = read_file($tpath.'/footer.php');
+
+			$timgpath = base_url().'application/assets/aweSimReportTemplates/'.$template->template_folder.'/'.$template->template_imagefolder;
+
+			foreach (tmpl as $key => $val) {
+		 		$tmpl[$key] = str_replace('%%images%%',$timgpath,$tmpl[$val]);
+			}
+			return $tmpl;
+		} else {
+			return FALSE;
+		}
+	}
+	
+	/*
+	|---------------------------------------------------------------
+	| BUILD TEMPLATE METHODS
+	|---------------------------------------------------------------
+	*/
+/*	function create_coc_html($coc ='', $rank_ext ='',$displayRankImages ='') {
+//		$rank_ext = $this->ranks->get_rankcat($this->rank, 'rankcat_location', 'rankcat_extension');
+		if ($coc->num_rows() > 0) {
+			$cocHtml = '<table cellspacing="0" cellpadding="0">';
+			foreach ($coc->result() as $item) {
+				$cocHtml .= '<tr>';
+				if ($item->crew_type == 'active' && empty($item->user)) {
+					// skip 
+				} else {
+/*					if ($displayRankImages=='checked') {
+						$img_rank = array(
+							'src' => rank_location($this->rank, $item->rank_image, $rank_ext),
+							'alt' => $item->rank_name,
+							'class' => 'image',
+							'border' => 0,
+						);
+						$cocHtml .= '<td width="80">'.img($img_rank).'</td>';
+					}
+										
+					$coc_id = $item->charid;
+					/*$coc_name = $this->char->get_character_name($item->charid, TRUE);
+					$coc_position = $item->pos_name;
+		
+					$cocHtml .= '<td>';
+				/*	$cocHtml .= '<strong>'.anchor('personnel/character/'.$item->charid, 'BLA'.$coc_name).'</strong><br />';
+					$cocHtml .= '<span style="size: 90%;">('.$coc_position.')</span>';
+					$cocHtml .= '</td>';
+				}
+				$cocHtml .= '</tr>';
+			} //foreach coc item
+			$cocHtml .= '</table>';
+		} //end if coc has records
+		
+	}
+	*/
 	
 	/*
 	|---------------------------------------------------------------

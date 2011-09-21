@@ -66,6 +66,173 @@ class Ajax extends Ajax_base {
 
 	} /* end awe_add_section */
 		
+	function awe_preview_report() {
+		$head = "Preview Report";
+		/* data being sent to the facebox */
+		$data['header'] = $head;
+
+//		$data['inputsdata'] = $this->uri->segment(3);
+//		$data['inputsdata'] = $this->input->post('inputsdata');
+
+		$tDateStart = $this->input->post('txtReportDateStart', TRUE);
+		$tDateEnd = $this->input->post('txtReportDateEnd', TRUE);
+		$arrRosterUsers = $this->input->post('chkRosterShowUsers', TRUE);
+		$arrRosterAttendance = $this->input->post('rAttendance', TRUE);
+		$arrSections = $this->input->post('sections', TRUE);
+
+		$varlist = 'tDateStart='.$tDateStart.'&tDateEnd='.$tDateEnd;
+
+		//prepare the variable list for the iframe:
+		$varRosterUsers = '';
+		foreach ($arrRosterUsers as $key => $val) {
+			$varRosterUsers .= 'arrRosterUsers['.$key.']='.$val.'&';
+		}
+
+		$varRosterAttendance = '';
+		foreach ($arrRosterAttendance as $key => $val) {
+			$varRosterAttendance .= 'arrRosterAttendance['.$key.']='.$val.'&';
+		}
+
+		$varSections = '';
+		foreach ($arrSections as $key => $val) {
+			$varSections .= 'arrSections['.$key.']='.nl2br(str_replace(' ','+',$val)).'&';
+		}
+
+		$varlist = $varRosterUsers.$varRosterAttendance.$varSections.'tDateStart='.$tDateStart.'&tDateEnd='.$tDateEnd;
+
+		$data['varlist'] = $varlist;
+		/* figure out the skin */
+		$skin = $this->session->userdata('skin_admin');
+				
+		/* figure out where the view should come from */
+		$ajax = ajax_location('awe_preview_report', $skin, 'admin');
+				
+		/* write the data to the template */
+		$this->template->write_view('content', $ajax, $data);
+				
+		/* render the template */
+		$this->template->render();
+
+	}
+	function awe_preview_report_output() {
+//		$this->load->helper('file');
+		
+		$this->load->model('awesimreport_model', 'awe');
+		$this->load->model('characters_model', 'char');
+		$this->load->model('positions_model', 'pos');
+		$this->load->model('depts_model', 'dept');
+		$this->load->model('personallogs_model', 'logs');
+		$this->load->model('posts_model', 'posts');
+		$this->load->model('ranks_model', 'ranks');
+		$this->load->model('news_model', 'news');
+		$this->load->model('users_model', 'user');
+
+		//get all variables
+		$tDateStart = $this->input->post('tDateStart', TRUE);
+		$tDateEnd = $this->input->post('tDateEnd', TRUE);
+		$arrRosterUsers = $this->input->post('arrRosterUsers', TRUE);
+		$arrRosterAttendance = $this->input->post('arrRosterAttendance', TRUE);
+		$arrSections = $this->input->post('arrSections', TRUE);
+		
+		// grab the settings 
+		$settings_array = array(
+			'awe_txtSimStart','awe_txtSimEnd','awe_txtDateFormat','awe_txtEmailSubject','awe_txtReportTitle',
+			'awe_txtEmailRecipients','awe_chkPresenceTags','awe_txtReportDuration',
+			'awe_txtPresenceTag_Present','awe_txtPresenceTag_Unexcused','awe_txtPresenceTag_Excused',
+			'awe_chkShowRankImagesRoster','awe_chkShowRankImagesCOC','awe_ActiveTemplate',
+		);
+		$aweSettings = $this->settings->get_settings($settings_array);
+		
+		//get current template
+		$tmplID = $aweSettings['awe_ActiveTemplate'];		
+		$template = $this->awe->get_template_content($tmplID); 
+		
+/*		print_r($_POST); */
+		
+		echo $template['header'];
+		echo $template['section_title'];
+		echo $template['section_contents'];
+		echo $template['footer'];
+		
+		
+		//prepare output array:
+		$tOutput = array();
+
+		//get section order:
+/*		$sectionQuery = $this->awe->get_section_order();
+		$c =1;
+		if ($sectionQuery->num_rows() > 0) {
+			foreach ($sectionQuery->result() as $sID) {
+				$sec = $this->awe->get_section_details($sID);
+				if ($sec->num_rows() > 0) {
+					//get section info:
+					$section = $sec->row();
+					switch (strtolower($section->section_name)) {
+						case 'chain of command':
+							
+							$coc = $this->char->get_coc();
+							$rank_ext = $this->ranks->get_rankcat($this->rank, 'rankcat_location', 'rankcat_extension');
+
+		$rank_ext = $this->ranks->get_rankcat($this->rank, 'rankcat_location', 'rankcat_extension');
+		if ($coc->num_rows() > 0) {
+			$cocHtml = '<table cellspacing="0" cellpadding="0">';
+			foreach ($coc->result() as $item) {
+				$cocHtml .= '<tr>';
+				if ($item->crew_type == 'active' && empty($item->user)) {
+					// skip 
+				} else {
+
+					if ($aweSettings['awe_chkShowRankImagesCOC']=='checked') {
+						$img_rank = array(
+							'src' => rank_location($this->rank, $item->rank_image, $rank_ext),
+							'alt' => $item->rank_name,
+							'class' => 'image',
+							'border' => 0,
+						);
+						$cocHtml .= '<td width="80">'.img($img_rank).'</td>';
+					}
+										
+					$coc_id = $item->charid;
+					$coc_name = $this->char->get_character_name($item->charid, TRUE);
+					$coc_position = $item->pos_name;
+		
+					$cocHtml .= '<td>';
+					$cocHtml .= '<strong>'.anchor('personnel/character/'.$item->charid, $coc_name).'</strong><br />';
+					$cocHtml .= '<span style="size: 90%;">('.$coc_position.')</span>';
+					$cocHtml .= '</td>';
+				}
+				$cocHtml .= '</tr>';
+			} //foreach coc item
+			$cocHtml .= '</table>';
+		} //end if coc has records
+
+ 						
+						
+							$tOutput[$c]  = str_replace('%%section_title%%',$section->section_title,$template['section_title']);
+							$tOutput[$c] .= str_replace('%%section_content%%',$cocHtml,$template['section_content']);
+							break;
+						case 'report date':
+							break;
+						case 'reporting officer':
+							break;
+						case 'roster':
+							break;
+						case 'statistics':
+							break;
+						case 'sim time':
+							break;
+						default: //freetext
+							break;
+					}
+				} //end if sec->num_rows >0
+				$c++; //counter
+			} //end foreach section
+		}//end if sectionquery
+
+*/
+
+	}
+
 	function awe_edit_section() {
 		/* load the resources */
 		$this->load->model('awesimreport_model', 'awe');

@@ -16,7 +16,7 @@ body { font: 14px Helvetica, Arial, sans-serif; color: #767572; line-height: 100
 a:link { color: #61c7dd; }
 a:hover { color: #59b8cc; }
 ul { margin-left: 0; padding-left: 0; list-style: none; }
-ul li { padding-left: 12px; background-image: url(images/bg_bullet.png); background-repeat:	no-repeat; background-position: 0 50%; }
+ul li { padding-left: 12px; background-image: url(%%images%%/bg_bullet.png); background-repeat:	no-repeat; background-position: 0 50%; }
 </style>
 </head>
 <body bgcolor="#161616" leftmargin="0" topmargin="0" marginwidth="0" marginheight="0">
@@ -33,7 +33,7 @@ ul li { padding-left: 12px; background-image: url(images/bg_bullet.png); backgro
 			 </td>
           </tr>
           <tr>
-            <td colspan="2" valign="top" style="height: 16px; background-image: url(images/header_border.gif); background-repeat: no-repeat;"><img src="images/header_border.gif" width="600" height="16"/></td>
+            <td colspan="2" valign="top" style="height: 16px; background-image: url(%%images%%/header_border.gif); background-repeat: no-repeat;"><img src="%%images%%/header_border.gif" width="600" height="16"/></td>
           </tr>
         </table>
 		</td>

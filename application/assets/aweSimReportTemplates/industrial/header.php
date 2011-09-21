@@ -23,13 +23,13 @@
 	.footer p {font-size: 11px; color:#7d7a7a; margin: 0; padding: 0;font-family: Helvetica, Arial, sans-serif;}
 	.footer a {color: #998311; text-decoration: none;}
 	ul { margin-left: 0; padding-left: 0; list-style: none; }
-	ul li { padding-left: 12px; background-image: url(images/bg_bullet.jpg); background-repeat:	no-repeat; background-position: 0 50%; }
+	ul li { padding-left: 12px; background-image: url(%%images%%/bg_bullet.jpg); background-repeat:	no-repeat; background-position: 0 50%; }
 	</style>
   </head>
-  <body style="margin: 0; padding: 0; background: #080708 url('images/bg_email.png');" bgcolor="#080708">
+  <body style="margin: 0; padding: 0; background: #080708 url('%%images%%/bg_email.png');" bgcolor="#080708">
   	<table cellpadding="0" cellspacing="0" border="0" align="center" width="100%">
 		  <tr>
-		  	<td align="center" style="background: url('images/bg_email.png'); padding: 5px 0">
+		  	<td align="center" style="background: url('%%images%%/bg_email.png'); padding: 5px 0">
 				<!-- begin header-->
 			    <table cellpadding="0" cellspacing="0" border="0" align="center" width="650" style="font-family: Helvetica, Arial, sans-serif;" class="header">
 			      <tr>
@@ -40,7 +40,7 @@
 			      </tr>
 				</table>
 				<!-- end header-->
-				<table cellpadding="0" cellspacing="0" border="0" align="center" width="650" style="font-family: Helvetica, Arial, sans-serif; background: #1e1e1e url('images/bg_table.png');" bgcolor="#1e1e1e">
+				<table cellpadding="0" cellspacing="0" border="0" align="center" width="650" style="font-family: Helvetica, Arial, sans-serif; background: #1e1e1e url('%%images%%/bg_table.png');" bgcolor="#1e1e1e">
 					<tr>
 			        <td width="20" style="font-size: 0px;">&nbsp;</td>
 					<td width="610" valign="top" align="left" style="font-family: Helvetica, Arial, sans-serif;" class="content">

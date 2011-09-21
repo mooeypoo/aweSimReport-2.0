@@ -4,6 +4,7 @@
 
 <script type="text/javascript" src="<?php echo base_url() . APPFOLDER;?>/assets/js/jquery.qtip.js"></script>
 <script type="text/javascript" src="<?php echo base_url() . APPFOLDER;?>/assets/js/jquery.ui.datepicker.min.js"></script>
+<script type="text/javascript" src="<?php echo base_url() . APPFOLDER;?>/assets/js/jquery.popupWindow.js"></script>
 <link rel="stylesheet" type="text/css" href="<?php echo base_url() . APPFOLDER;?>/assets/js/css/jquery.ui.datepicker.css" />
 
 
@@ -39,9 +40,20 @@ $(document).ready(function(){
 		return false;
 	});
 	
-	$('#submitPreview').click(function(){
-		alert('Coming soon, stay tuned!');
-		return false;
+	$('#save').click(function(){
+	<?php 	if ($this->uri->segment(4) !== FALSE) { ?>
+		var loc ='<?php echo site_url('report/awesimreport/generator').$this->uri->segment(4) ?>';
+	<?php	} else {  ?>
+		var loc ='<?php echo site_url('report/awesimreport/generator'); ?>';
+	<?php	} ?>
+
+		$('#frmGenerate').attr('target', ''); //open the form in a new window
+		$('#frmGenerate').attr('action',loc);
+	});
+	
+	$('#preview').click(function(){
+		$('#frmGenerate').attr('target', '_blank'); //open the form in a new window
+		$('#frmGenerate').attr('action','<?php echo site_url('ajax/awe_preview_report_output') ?>');
 	});
 	
     // Notice the use of the each method to gain access to each element individually
@@ -57,13 +69,6 @@ $(document).ready(function(){
 
         conts = '<strong>Report Author:</strong> ' + repauthor + '<br />';
         conts += '<strong>Report Dates:</strong> ' + repdates + '<br />';
-/*	
-        thumbnail = $('<img />').attr({
-            src: 'http://craigsworks.com/projects/qtip/images/bubbles_blue.png',
-            alt: 'Loading thumbnail...',
-            width: 202,
-            height: 152
-        });*/
 
         // Setup the tooltip with the content
         $(this).qtip(
