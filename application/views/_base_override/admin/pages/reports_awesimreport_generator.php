@@ -89,7 +89,11 @@
 					</tr>
 <?php 				if ($roster['UseTags'] == 'checked') { ?>					
 					<tr>
+<?php					if (($roster['ShowRankImages']) == 'checked') { ?>
+						<th colspan="4">&nbsp;</th>
+<?php					} else { ?>
 						<th colspan="3">&nbsp;</th>
+<?php 					} ?>						
 						<th class="fontTiny nobold"><?php print $roster['Unexcused']; ?></th>
 						<th class="fontTiny nobold"><?php print $roster['Excused']; ?></th>
 						<th class="fontTiny nobold"><?php print $roster['Present']; ?></th>

@@ -115,7 +115,6 @@ class Ajax extends Ajax_base {
 
 	}
 	function awe_preview_report_output() {
-//		$this->load->helper('file');
 		
 		$this->load->model('awesimreport_model', 'awe');
 		$this->load->model('characters_model', 'char');
@@ -128,18 +127,18 @@ class Ajax extends Ajax_base {
 		$this->load->model('users_model', 'user');
 
 		//get all variables
-		$tDateStart = $this->input->post('tDateStart', TRUE);
-		$tDateEnd = $this->input->post('tDateEnd', TRUE);
-		$arrRosterUsers = $this->input->post('arrRosterUsers', TRUE);
-		$arrRosterAttendance = $this->input->post('arrRosterAttendance', TRUE);
-		$arrSections = $this->input->post('arrSections', TRUE);
+		$tDateStart = $this->input->post('txtReportDateStart', TRUE);
+		$tDateEnd = $this->input->post('txtReportDateEnd', TRUE);
+		$arrRosterUsers = $this->input->post('chkRosterShowUsers', TRUE);
+		$arrRosterAttendance = $this->input->post('rAttendance', TRUE);
+		$arrSections = $this->input->post('sections', TRUE);
 		
 		// grab the settings 
 		$settings_array = array(
-			'awe_txtSimStart','awe_txtSimEnd','awe_txtDateFormat','awe_txtEmailSubject','awe_txtReportTitle',
+			'sim_name','awe_txtSimStart','awe_txtSimEnd','awe_txtDateFormat','awe_txtEmailSubject','awe_txtReportTitle',
 			'awe_txtEmailRecipients','awe_chkPresenceTags','awe_txtReportDuration',
 			'awe_txtPresenceTag_Present','awe_txtPresenceTag_Unexcused','awe_txtPresenceTag_Excused',
-			'awe_chkShowRankImagesRoster','awe_chkShowRankImagesCOC','awe_ActiveTemplate',
+			'awe_chkShowRankImagesRoster','awe_chkShowRankImagesCOC','awe_ActiveTemplate','awe_txtTemplateFooter',
 		);
 		$aweSettings = $this->settings->get_settings($settings_array);
 		
@@ -149,87 +148,208 @@ class Ajax extends Ajax_base {
 		
 /*		print_r($_POST); */
 		
-		echo $template['header'];
-		echo $template['section_title'];
-		echo $template['section_contents'];
-		echo $template['footer'];
-		
-		
 		//prepare output array:
 		$tOutput = array();
 
 		//get section order:
-/*		$sectionQuery = $this->awe->get_section_order();
+		$sectionQuery = $this->awe->get_section_order();
 		$c =1;
 		if ($sectionQuery->num_rows() > 0) {
 			foreach ($sectionQuery->result() as $sID) {
-				$sec = $this->awe->get_section_details($sID);
+				$sec = $this->awe->get_section_details($sID->section_id);
 				if ($sec->num_rows() > 0) {
 					//get section info:
 					$section = $sec->row();
+					$tOutput[$c]['title']  = $section->section_title;
 					switch (strtolower($section->section_name)) {
 						case 'chain of command':
 							
 							$coc = $this->char->get_coc();
-							$rank_ext = $this->ranks->get_rankcat($this->rank, 'rankcat_location', 'rankcat_extension');
+							$defaultRankset = $this->ranks->get_rank_default();
+							$rank_ext = $this->ranks->get_rankcat($defaultRankset, 'rankcat_location', 'rankcat_extension');
+							if ($coc->num_rows() > 0) {
+								$cocHtml = '<table cellspacing="0" cellpadding="0" class="coctable">';
+								foreach ($coc->result() as $item) {
+									$cocHtml .= '<tr>';
+									if ($item->crew_type == 'active' && empty($item->user)) {
+										// skip 
+									} else {
+					
+										if ($aweSettings['awe_chkShowRankImagesCOC']=='checked') {
+											
+											$charinf = $this->char->get_character($item->charid);
+											//get rank image:
+											$rankdata = $this->ranks->get_rank($charinf->rank, array('rank_name', 'rank_image'));
+										/*	$rank = $this->ranks->get_rankcat($defaultRankset);
+											/* build the rank image array 
+											$rank_img = array(
+												'src' => rank_location($defaultRankset, $rankdata['rank_image'],$rank->rankcat_extension),
+												'alt' => $rankdata['rank_name'],
+												'class' => 'image');
+*/
+											$img_rank = array(
+											/*	'src' => rank_location($this->rank, $item->rank_image, $rank_ext),*/
+												'src' => rank_location($defaultRankset, $item->rank_image, $rank_ext),
+												'alt' => $item->rank_name,
+												'class' => 'image',
+												'border' => 0,
+											);
+									
+											$cocHtml .= '<td width="80" class="coc_rank">'.img($img_rank).'</td>';
+										}
+															
+										$coc_id = $item->charid;
+										$coc_name = $this->char->get_character_name($item->charid, TRUE);
+										$coc_position = $item->pos_name;
 
-		$rank_ext = $this->ranks->get_rankcat($this->rank, 'rankcat_location', 'rankcat_extension');
-		if ($coc->num_rows() > 0) {
-			$cocHtml = '<table cellspacing="0" cellpadding="0">';
-			foreach ($coc->result() as $item) {
-				$cocHtml .= '<tr>';
-				if ($item->crew_type == 'active' && empty($item->user)) {
-					// skip 
-				} else {
-
-					if ($aweSettings['awe_chkShowRankImagesCOC']=='checked') {
-						$img_rank = array(
-							'src' => rank_location($this->rank, $item->rank_image, $rank_ext),
-							'alt' => $item->rank_name,
-							'class' => 'image',
-							'border' => 0,
-						);
-						$cocHtml .= '<td width="80">'.img($img_rank).'</td>';
-					}
-										
-					$coc_id = $item->charid;
-					$coc_name = $this->char->get_character_name($item->charid, TRUE);
-					$coc_position = $item->pos_name;
-		
-					$cocHtml .= '<td>';
-					$cocHtml .= '<strong>'.anchor('personnel/character/'.$item->charid, $coc_name).'</strong><br />';
-					$cocHtml .= '<span style="size: 90%;">('.$coc_position.')</span>';
-					$cocHtml .= '</td>';
-				}
-				$cocHtml .= '</tr>';
-			} //foreach coc item
-			$cocHtml .= '</table>';
-		} //end if coc has records
-
- 						
-						
-							$tOutput[$c]  = str_replace('%%section_title%%',$section->section_title,$template['section_title']);
-							$tOutput[$c] .= str_replace('%%section_content%%',$cocHtml,$template['section_content']);
+										$coc_item['id'] = $item->charid;
+										$coc_item['coc_name'] = $this->char->get_character_name($item->charid, TRUE);
+										$coc_item['coc_position'] = $item->pos_name;
+							
+										$cocHtml .= '<td class="coc_char">';
+										$cocHtml .= '<strong>'.anchor('personnel/character/'.$item->charid, $coc_name).'</strong><br />';
+										$cocHtml .= '<span style="size: 90%;">('.$coc_position.')</span>';
+										$cocHtml .= '</td>';
+									}
+									$cocHtml .= '</tr>';
+								} //foreach coc item
+								$cocHtml .= '</table>';
+							} //end if coc has records
+							$html = $cocHtml;
 							break;
 						case 'report date':
+							$html = '<span class="reportDate">Dates: '.date($aweSettings['awe_txtDateFormat'],$tDateStart).' to '.date($aweSettings['awe_txtDateFormat'],$tDateEnd).'</span>';
 							break;
 						case 'reporting officer':
+							$uid = $this->session->userdata('userid');
+							$charid = $this->user->get_main_character($uid);
+							$curr_char = $this->char->get_character($charid);
+							$posts = $this->pos->get_position($curr_char->position_1);
+							$positions = ($posts !== FALSE) ? $posts->pos_name : '';
+							if ((int)($curr_char->position_2)>0) {
+								$positions .= " & ".$this->pos->get_position($curr_char->position_2, 'pos_name');
+							}
+							$html  = '<span class="reportingOfficer">';
+							$html .= $this->char->get_character_name($charid, TRUE).'<br />';
+							$html .= $positions.'<br />';
+							$html .= $aweSettings['sim_name'];
+							$html .= '</span>';
 							break;
 						case 'roster':
+							$arrRosterAttendanceTags = '';
+							//go over the 'checked users' checkboxes:
+							if ($aweSettings['awe_chkPresenceTags'] == 'checked') {
+								$arrRosterAttendanceTags['P'] = $aweSettings['awe_txtPresenceTag_Present'];
+								$arrRosterAttendanceTags['U'] = $aweSettings['awe_txtPresenceTag_Unexcused'];
+								$arrRosterAttendanceTags['E'] = $aweSettings['awe_txtPresenceTag_Excused'];
+							}
+							$depts = $this->dept->get_all_depts('asc', '');
+							if ($depts->num_rows() > 0) {
+								foreach ($depts->result() as $d) {
+									$characters[$d->dept_id]['deptname'] = $d->dept_name;
+		
+									$subdepts = $this->dept->get_sub_depts($d->dept_id);
+									if ($subdepts->num_rows() >0) {
+										foreach ($subdepts->result() as $subd) {
+											$characters[$d->dept_id]['subdept'][$subd->dept_id]['deptname'] = $subd->dept_name;
+										}
+									} 
+								}
+							}
+							
+							if (count($arrRosterUsers) > 0) {
+								foreach ($arrRosterUsers as $uid => $val) {
+									$charid = $this->user->get_main_character($uid);
+									
+									$charinf = $this->char->get_character($charid);
+
+									//get rank image:
+									$rankdata = $this->ranks->get_rank($charinf->rank, array('rank_name', 'rank_image'));
+									$defaultRankset = $this->ranks->get_rank_default();
+									$rank = $this->ranks->get_rankcat($defaultRankset);
+									/* build the rank image array */
+									$rank_img = array(
+										'src' => rank_location($defaultRankset, $rankdata['rank_image'],$rank->rankcat_extension),
+										'alt' => $rankdata['rank_name'],
+										'class' => 'image');
+									
+
+									$posts = $this->pos->get_position($charinf->position_1);
+									$positions = ($posts !== FALSE) ? $posts->pos_name : '';
+									if ((int)($charinf->position_2)>0) {
+										$positions .= " & ".$this->pos->get_position($charinf->position_2, 'pos_name');
+									}
+									$currdept = $this->dept->get_dept($posts->pos_dept);
+									$cdept = $currdept->dept_id; 
+									$parentDep= $currdept->dept_parent; 
+									
+									
+									$u = $this->user->get_user($uid);
+									$loa = $u->loa;
+									if ((int)($parentDep) > 0) { //there is a 'parent' to the dept
+										$characters[$parentDep]['subdept'][$cdept]['chars'][$uid] = array(
+											'id' => $uid,
+											'name' => $u->name,
+											'email' => $u->email,
+											'char_name' => $this->char->get_character_name($charid, TRUE),
+											'position' => $positions,
+											'rank_img' => $rank_img,
+											'charid' => $charid,
+											'attendance' => $arrRosterAttendance[$uid],
+											'logcount' => $this->awe->count_user_log_post($uid, strtotime($tDateStart), strtotime($tDateEnd),'logs'),
+											'postcount' => $this->awe->count_user_log_post($uid, strtotime($tDateStart), strtotime($tDateEnd),'posts'),
+											'totalcount' => $this->awe->count_user_log_post($uid, strtotime($tDateStart), strtotime($tDateEnd)),
+										); 
+//										$departments[$charid] = $cdept;
+									} else { //the dept is the parent
+										$characters[$cdept]['chars'][$uid] = array(
+											'id' => $uid,
+											'name' => $u->name,
+											'email' => $u->email,
+											'char_name' => $this->char->get_character_name($charid, TRUE),
+											'position' => $positions,
+											'rank_img' => $rank_img,
+											'charid' => $charid,
+											'attendance' => $arrRosterAttendance[$uid],
+											'logcount' => $this->awe->count_user_log_post($uid, strtotime($tDateStart), strtotime($tDateEnd),'logs'),
+											'postcount' => $this->awe->count_user_log_post($uid, strtotime($tDateStart), strtotime($tDateEnd),'posts'),
+											'totalcount' => $this->awe->count_user_log_post($uid, strtotime($tDateStart), strtotime($tDateEnd)),
+										); 
+//										$departments[$charid] = $cdept;
+									}
+								} //end foreach users
+							}
+							
+							
+							$html ='';
+							$html = $this->awe->template_make_roster_html($characters,$aweSettings['awe_chkPresenceTags'],$arrRosterAttendanceTags,$aweSettings['awe_chkShowRankImagesRoster']);
 							break;
 						case 'statistics':
-							break;
-						case 'sim time':
+							$html ='';
 							break;
 						default: //freetext
+							$html = nl2br($arrSections[$section->section_id]);
 							break;
 					}
+					$tOutput[$c]['html']  = $html;
 				} //end if sec->num_rows >0
 				$c++; //counter
 			} //end foreach section
 		}//end if sectionquery
-
-*/
+		
+		
+		//print out the html result:
+		echo $this->awe->template_replace_tag($template['header'],'%%reporttitle%%',$aweSettings['awe_txtReportTitle']);
+		
+		//print out sections:
+		foreach ($tOutput as $sec) {
+			if (!empty($sec['html'])) {
+				echo $this->awe->template_replace_tag($template['section_title'],'%%section_title%%',$sec['title']);
+				echo $this->awe->template_replace_tag($template['section_content'],'%%section_content%%',$sec['html']);
+			}
+		}
+		
+		echo $this->awe->template_replace_tag($template['footer'],'%%footer%%',$aweSettings['awe_txtTemplateFooter']);
 
 	}
 
@@ -482,6 +602,9 @@ class Ajax extends Ajax_base {
 			$upArr['awe_txtReportTitle'] = array(
 				'setting_value' => $this->input->post('txtReportTitle')
 			);
+			$upArr['awe_txtTemplateFooter'] = array(
+				'setting_value' => $this->input->post('txtTemplateFooter')
+			);
 			$upArr['awe_txtEmailRecipients'] = array(
 				'setting_value' => $this->input->post('txtEmailRecipients')
 			);
@@ -636,43 +759,6 @@ class Ajax extends Ajax_base {
 
 	} /* end awe_save_report */
 
-/*
-	function awe_report_save() {
-		if (IS_AJAX) {
-			//custom sections:
-			$sections = $this->input->post('sections');
-			$dateStart = $this->input->post('txtReportStart');
-			$dateEnd = $this->input->post('txtReportEnd');
-			$showUsers = $this->input->post('chkRosterShowUsers');
-			
-			$dataArray = array(
-					   'sections' => $sections,
-					   'showUsers' => $showUsers,
-					   );
-			
-			//build insert array:
-			$update_array = array(
-				'report_date_start' => $dateStart,
-				'report_date_end' => $dateEnd,
-				'report_author' => $this->session->userdata('userid'),
-				'report_data' => serialize($dataArray),
-				'report_sent' => 0,
-				'report_saved_date' => time()
-			);
-
-										
-			/* insert the record 
-			$insert = $this->awe->save_report($update_array);
-										
-			if ($insert > 0) {
-				$message = "Report saved successfully.";
-			} else {
-				$message = 'Err 102: There was a problem editing the requested section. Please try again later.';
-			}
-			echo $message;
-			
-		}
-	}*/
 	
 	function awe_tooltip_saved_report() {
 		if (IS_AJAX) {

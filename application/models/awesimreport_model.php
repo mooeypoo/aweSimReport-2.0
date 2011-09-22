@@ -88,6 +88,7 @@ class Awesimreport_model extends Model {
 		
 		return FALSE;
 	}
+	
 
 	function get_all_templates() {
 		$query = $this->db->get('awe_templates');
@@ -118,7 +119,7 @@ class Awesimreport_model extends Model {
 		}
 	}
 	
-	function get_template_content($id = 0){
+	function get_template_content($id = 0) {
 		$this->load->helper('file');
 		$template = $this->get_template_details($id);
 		if ($template !== FALSE) {
@@ -130,8 +131,8 @@ class Awesimreport_model extends Model {
 
 			$timgpath = base_url().'application/assets/aweSimReportTemplates/'.$template->template_folder.'/'.$template->template_imagefolder;
 
-			foreach (tmpl as $key => $val) {
-		 		$tmpl[$key] = str_replace('%%images%%',$timgpath,$tmpl[$val]);
+			foreach ($tmpl as $key => $val) {
+		 		$tmpl[$key] = str_replace('%%images%%', $timgpath, $tmpl[$key]);
 			}
 			return $tmpl;
 		} else {
@@ -139,47 +140,77 @@ class Awesimreport_model extends Model {
 		}
 	}
 	
+	
+	
 	/*
 	|---------------------------------------------------------------
 	| BUILD TEMPLATE METHODS
 	|---------------------------------------------------------------
 	*/
-/*	function create_coc_html($coc ='', $rank_ext ='',$displayRankImages ='') {
-//		$rank_ext = $this->ranks->get_rankcat($this->rank, 'rankcat_location', 'rankcat_extension');
-		if ($coc->num_rows() > 0) {
-			$cocHtml = '<table cellspacing="0" cellpadding="0">';
-			foreach ($coc->result() as $item) {
-				$cocHtml .= '<tr>';
-				if ($item->crew_type == 'active' && empty($item->user)) {
-					// skip 
-				} else {
-/*					if ($displayRankImages=='checked') {
-						$img_rank = array(
-							'src' => rank_location($this->rank, $item->rank_image, $rank_ext),
-							'alt' => $item->rank_name,
-							'class' => 'image',
-							'border' => 0,
-						);
-						$cocHtml .= '<td width="80">'.img($img_rank).'</td>';
-					}
-										
-					$coc_id = $item->charid;
-					/*$coc_name = $this->char->get_character_name($item->charid, TRUE);
-					$coc_position = $item->pos_name;
-		
-					$cocHtml .= '<td>';
-				/*	$cocHtml .= '<strong>'.anchor('personnel/character/'.$item->charid, 'BLA'.$coc_name).'</strong><br />';
-					$cocHtml .= '<span style="size: 90%;">('.$coc_position.')</span>';
-					$cocHtml .= '</td>';
-				}
-				$cocHtml .= '</tr>';
-			} //foreach coc item
-			$cocHtml .= '</table>';
-		} //end if coc has records
-		
+	function template_replace_tag($content='', $tag_name ='', $tag_title ='') {
+		return str_replace($tag_name, $tag_title, $content);
 	}
-	*/
 	
+	function template_make_roster_html($charsArray,$useAttendance='',$attTags = '',$useRanks='') {
+		$output = '';
+		//HEADER
+		$output  = '<table cellspacing="0" cellpadding="0" width="100%" class="roster">';
+		$output .= '<thead>';
+		$output .= '<tr class="tblheader">';
+		if ($useRanks == 'checked') {
+			$output .= '<th align="center">Rank</th>';
+		}
+		$output .= '<th colspan=2 align="center">Name</th>';
+		if ($useAttendance =='checked') {
+			$output .= '<th align="center">Presence</th>';
+		}
+		$output .= '<th align="center">Log Count</th>';
+		$output .= '</tr>';
+
+		//TABLE CONTENT:
+		$total_logcount = 0;
+		
+		
+		foreach ($charsArray as $dept) {
+			if ((isset($dept['chars'])) && (count($dept['chars'])>0)) {	
+				$output .= '<tr><td colspan="5"align="center" class="dept"><span style="margin-top:3px; margin-bottom: 3px; font-weight:bold;">'.strtoupper($dept['deptname']).'</span></td></tr>';
+				foreach ($dept['chars'] as $char) {
+					$output .= '<tr>';
+					if ($useRanks == 'checked') {
+						$output .= '<td width="70">'.img($char['rank_img']).'</td>';
+					}
+					$output .= '<td>'; //charname 
+					$output .= '<span class="charname">'.$char['char_name'].'</span><br />';
+					$output .= '<span class="userlinks" style="font-size: 80%">'.anchor('personnel/user/'. $char['id'], 'User Account').' | ';
+					$output .= anchor('personnel/character/'. $char['charid'], 'Character Bio').'</span>';
+					$output .= '</td>';
+					$output .= '<td>'; //char position
+					$output .= '<span style="font-size: 80%">('.$char['position'].')</span>';
+					$output .= '</td>';
+					if ($useAttendance =='checked') {
+						$output .= '<td align="center">'; //presence
+						if (($char['attendance'] == 'loa') || ($char['attendance'] == 'eloa')) {
+							$output .= '<span class="loa"><strong>'.$char['attendance'].'</strong></span>';
+						}
+						$output .= '<span class="attendance">'.$char['attendance'].'</span>';
+						$output .= '</td>';
+					}
+					$output .= '<td align="center">'; //logcount
+					$output .= '<span class="count">'.$char['totalcount'].'</span>';
+					$output .= '</td>'; 
+					
+					$total_logcount = $total_logcount + $char['totalcount'];
+					
+					$output .= '</tr>';
+				} //end foreach user
+			} //end if dept has users
+		} //end foreach $charsArray
+
+		$output .= '<tr><td colspan=6 align="right" class="totalcount"> Total Logcount: '.$total_logcount.'</td></tr>';
+		$output .= '</table>';
+
+		return $output;
+	} 
 	/*
 	|---------------------------------------------------------------
 	| CREATE METHODS
@@ -302,42 +333,45 @@ class Awesimreport_model extends Model {
 	| GENERATOR METHODS
 	|---------------------------------------------------------------
 	*/
+	function count_user_log_post($id, $startDate ='',$endDate ='',$type='all') {
+	//	return $startDate.' to '.$endDate;
 	
-	function collect_user_logcount($id = 0, $type = 'all') {
+		$countposts = 0;
+		$countlogs = 0;
 		$count = 0;
-		//mission posts:
-		$this->db->from('posts');
-		$this->db->where('post_status', 'activated');
 		
-		$this->db->where('post_date >=', $startDate);
-		$this->db->where('post_date <=', $endDate);
+		    $this->db->from('posts');
+		    $this->db->where('post_status', 'activated');
+		    
+		    $this->db->where('post_date >=', $startDate);
+		    $this->db->where('post_date <=', $endDate);
+		    
+		    $string = "(post_authors_users LIKE '%,$id' OR post_authors_users LIKE '$id,%' OR post_authors_users LIKE '%,$id,%' OR post_authors_users = $id)";
 			
-		$string = "(post_authors_users LIKE '%,".$id."' OR post_authors_users LIKE '$id,%' OR post_authors_users LIKE '%,".$id.",%' OR post_authors_users = ".$id.")";
-		
-		$this->db->where("($string)", NULL);
-		
-		$count_posts = $this->db->count_all_results();
-		
-		//personal logs
-		$this->db->from('personallogs');
-		$this->db->where('log_status', 'activated');
+		    $this->db->where("($string)", NULL);
 			
-		$this->db->where('log_date >=', $startDate);
-		$this->db->where('log_date <=', $endDate);
+		    $countposts = $this->db->count_all_results();
+
+		    $this->db->from('personallogs');
+		    $this->db->where('log_status', 'activated');
+		    
+		    $this->db->where('log_date >=', $startDate);
+		    $this->db->where('log_date <=', $endDate);
+		    
+		    $this->db->where('log_author_user', $id);
 			
-		$this->db->where('log_author_user', $id);
-				
-		$count_logs = $this->db->count_all_results();
-		
-		if ($type == 'logs') {
-			$count = (int)($count_logs);
-		} elseif ($type == 'posts') {
-			$count = (int)($count_posts);
+		    $countlogs = $this->db->count_all_results();
+
+		if ($type=='posts') {
+			return ($countposts);
+		} elseif ($type=='logs') {
+			return ($countlogs);
 		} else {
-			$count = (int)($count_posts) + (int)($count_logs);
+			return ($countposts) + ($countlogs);
 		}
-		return $count;
-	}
+
+	}	
+
 	
 	
 }

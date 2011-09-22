@@ -18,7 +18,7 @@
 	.header p {color: #848484; font: normal 12px Helvetica, Arial, sans-serif; margin: 0; padding: 0; line-height: 12px;}
 
 	.content h2 {color:#e1e1e1 !important; font-weight: normal; margin: 0; padding: 0; line-height: 26px; font-size: 25px;font-family: Helvetica, Arial, sans-serif; }
-	.content p {color:#767676; font-weight: normal; margin: 0; padding: 0; line-height: 20px; font-size: 12px;font-family: Helvetica, Arial, sans-serif; }
+	body, .content p {color:#767676; font-weight: normal; margin: 0; padding: 0; line-height: 20px; font-size: 12px;font-family: Helvetica, Arial, sans-serif; }
 	.content a {color: #ffd801; text-decoration: none;}
 	.footer p {font-size: 11px; color:#7d7a7a; margin: 0; padding: 0;font-family: Helvetica, Arial, sans-serif;}
 	.footer a {color: #998311; text-decoration: none;}

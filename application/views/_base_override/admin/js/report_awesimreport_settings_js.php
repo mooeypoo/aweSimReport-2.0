@@ -35,6 +35,7 @@ $(document).ready(function(){
 		var awe_txtEmailSubject = $('#txtEmailSubject').val();
 		var awe_txtEmailRecipients = $('#txtEmailRecipients').val();
 		var awe_txtReportTitle = $('#txtReportTitle').val();
+		var awe_txtTemplateFooter = $('#txtTemplateFooter').val();
 		
 		var awe_chkPresenceTags = (($('#chkPresenceTags').attr('checked'))==true ? 'checked' : '');
 		var awe_txtPresenceTag_Present = $('#txtPresenceTag_Present').val();
@@ -62,6 +63,7 @@ $(document).ready(function(){
 				txtPresenceTag_Excused: awe_txtPresenceTag_Excused,
 				chkShowRankImagesRoster: awe_chkShowRankImagesRoster,
 				chkShowRankImagesCOC: awe_chkShowRankImagesCOC,
+				txtTemplateFooter: awe_txtTemplateFooter,
 			},
 			success: function(data) {
 			if (data=='success') {

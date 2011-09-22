@@ -48,6 +48,7 @@
 		<kbd><?php echo form_label('Date Format:', 'txtDateFormat');?><?php echo form_input($inputs['txtDateFormat']); ?></kbd>
 		<kbd><?php echo form_label('Report Duration:', 'txtReportDuration');?><?php echo form_input($inputs['txtReportDuration']); ?> days.</kbd>
 		<kbd><?php echo form_label('Report Title:', 'txtReportTitle');?><?php echo form_input($inputs['txtReportTitle']); ?></kbd>
+		<kbd><?php echo form_label('Template Footer:', 'txtTemplateFooter');?><br /><?php echo form_textarea($inputs['txtTemplateFooter']); ?></kbd>
 	</div>
 
 	<?php echo text_output('Email Settings', 'h2', 'page-subhead');?>

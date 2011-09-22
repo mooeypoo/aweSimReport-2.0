@@ -49,11 +49,13 @@ $(document).ready(function(){
 
 		$('#frmGenerate').attr('target', ''); //open the form in a new window
 		$('#frmGenerate').attr('action',loc);
+		$('#frmGenerate').get(0).setAttribute('action', loc);
 	});
 	
 	$('#preview').click(function(){
 		$('#frmGenerate').attr('target', '_blank'); //open the form in a new window
 		$('#frmGenerate').attr('action','<?php echo site_url('ajax/awe_preview_report_output') ?>');
+		$('#frmGenerate').get(0).setAttribute('action', '<?php echo site_url('ajax/awe_preview_report_output') ?>');
 	});
 	
     // Notice the use of the each method to gain access to each element individually

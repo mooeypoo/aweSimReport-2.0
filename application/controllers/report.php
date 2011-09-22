@@ -85,6 +85,8 @@ class Report extends Report_base {
 			'awe_chkShowRankImagesRoster',
 			'awe_chkShowRankImagesCOC',
 			'awe_ActiveTemplate',
+			'awe_txtTemplateFooter',
+			
 		);
 		$aweSettings = $this->settings->get_settings($settings_array);
 		
@@ -180,8 +182,6 @@ class Report extends Report_base {
 							}
 							break; //update
 						case 'preview report':
-							
-							
 							break; //generate
 						case 'generate report':
 							break; //generate
@@ -793,6 +793,11 @@ class Report extends Report_base {
 						'name' => 'txtReportDuration',
 						'id' => 'txtReportDuration',
 						'value' => $aweSettings['awe_txtReportDuration']),
+					'txtTemplateFooter' => array(
+						'rows' => '5',
+						'name' => 'txtTemplateFooter',
+						'id' => 'txtTemplateFooter',
+						'value' => $aweSettings['awe_txtTemplateFooter']),
 					'txtEmailSubject' => array(
 						'style' => 'width:400px;',
 						'name' => 'txtEmailSubject',

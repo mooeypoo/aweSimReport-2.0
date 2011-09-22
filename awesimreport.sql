@@ -146,4 +146,5 @@ INSERT INTO `nova_settings` (`setting_key`, `setting_value`, `setting_label`, `s
 ('awe_txtReportDuration', '14', 'awSimReport - Report Duration', 'y'),
 ('awe_chkShowRankImagesCOC', '', 'aweSimReport - Show Rank Images for COC', 'y'),
 ('awe_txtReportTitle', 'Sim Report for USS Awesome', 'awSimReport - Report Title', 'y'),
+('awe_txtTemplateFooter', 'Thank you for participating in USS Awesime game. For more information, please see our website.', 'awSimReport - Template Footer', 'y'),
 ('awe_ActiveTemplate', '1', 'awSimReport - Active Template', 'y');
