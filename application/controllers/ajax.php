@@ -84,7 +84,7 @@ class Ajax extends Ajax_base {
 			);
 			$aweSettings = $this->settings->get_settings($settings_array);
 
-			$data['report']['dateSent'] = date($aweSettings['awe_txtDateFormat'],$dateSent);
+			$data['report']['dateSent'] = strftime($aweSettings['awe_txtDateFormat'],$dateSent);
 			
 			$head = "Archived Report (ID# ".$repID.')';
 			/* data being sent to the facebox */
@@ -342,7 +342,7 @@ class Ajax extends Ajax_base {
 							
 							
 							$html ='';
-							$html = '<span class="reportDate">Dates: '.date($aweSettings['awe_txtDateFormat'],$tDateStart).' to '.date($aweSettings['awe_txtDateFormat'],$tDateEnd).'</span>';
+							$html = '<span class="reportDate">Dates: '.strftime($aweSettings['awe_txtDateFormat'],$tDateStart).' to '.strftime($aweSettings['awe_txtDateFormat'],$tDateEnd).'</span>';
 							$html .= $this->awe->template_make_roster_html($characters,$aweSettings['awe_chkPresenceTags'],$arrRosterAttendanceTags,$aweSettings['awe_chkShowRankImagesRoster']);
 							break;
 						case 'statistics':
@@ -674,11 +674,6 @@ class Ajax extends Ajax_base {
 			} else {
 				echo 'success';
 			}
-/*
-			if ((isset($upErr)) || (count($upErr) > 0)) { 
-			} else {
-				echo "success";
-			} */
 		} 
 	} /* end awe_settings_save */
 	
@@ -807,13 +802,16 @@ class Ajax extends Ajax_base {
 		if (IS_AJAX) {
 			/* load the resources */
 			$this->load->model('awesimreport_model', 'awe');
+
 			$nID = $this->input->post('tid');
 			$action = $this->input->post('act');
 			
 			if ($action=='unpublish') { $stat = 'hidden'; }
 			else { $stat = 'published'; }
+			
 			$update_array = array('report_status' => $stat);
-			$update = $this->aws->update_saved_report($nID,$update_array); 
+			$update = $this->awe->update_saved_report($nID,$update_array);
+			
 			if ($update>0) { echo 'success'; }
 			else { echo 'fail'; }
 		}

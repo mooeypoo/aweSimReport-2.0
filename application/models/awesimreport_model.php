@@ -112,8 +112,11 @@ class Awesimreport_model extends Model {
 
 	function count_archive() {
 		//don't show saved reports that aren't published
-		$this->db->where('report_status !=', 'saved');
-		$query = $this->db->get('awe_saved_reports');
+		$this->db->where('report_status', 'hidden');
+		$this->db->or_where('report_status', 'published');
+		$this->db->from('awe_saved_reports');
+		//$query = $this->db->get('awe_saved_reports');
+
 		return $this->db->count_all_results();
 	}
 
@@ -150,16 +153,25 @@ class Awesimreport_model extends Model {
 
 	function get_archived_reports($status = 'all',$limmin = 1,$recnum = 10) {
 	     /*
-		 param1  => 'y','n'
+		 param1  => 'all','published', 'hidden'
 		 param2  => number 
 		 param3  => number
 	     */
-	     $this->db->from('awe_saved_reports');
-		if ($status=='all') { //return all archived results
-			$this->db->where('report_status !=', 'saved');
-		} else {
-			$this->db->where('report_status', $status);
+		$this->db->from('awe_saved_reports');
+		switch ($status) {
+			case "hidden":
+				$this->db->where('report_status', 'hidden');
+				break;
+			case "published":
+				$this->db->where('report_status', 'published');
+				break;
+			case "all":
+			default:
+				$this->db->where('report_status', 'hidden');
+				$this->db->or_where('report_status', 'published');
+				break;
 		}
+
 		$this->db->limit($recnum,$limmin);
 		$query = $this->db->get();
 		

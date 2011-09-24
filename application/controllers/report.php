@@ -139,7 +139,7 @@ class Report extends Report_base {
 									'report_author' => $this->session->userdata('userid'),
 									'report_data' => serialize($dataArray),
 									'report_status' => 'saved',
-									'report_template' => $aweSetting['awe_ActiveTemplate'],
+									'report_template' => $aweSettings['awe_ActiveTemplate'],
 									'report_saved_date' => now()
 								);
 								
@@ -185,7 +185,7 @@ class Report extends Report_base {
 								'report_author' => $this->session->userdata('userid'),
 								'report_data' => serialize($dataArray),
 								'report_status' => 'saved',
-								'report_template' => $aweSetting['awe_ActiveTemplate'],
+								'report_template' => $aweSettings['awe_ActiveTemplate'],
 								'report_saved_date' => now()
 							);
 								
@@ -288,7 +288,7 @@ class Report extends Report_base {
 												$html = $cocHtml;
 												break;
 											case 'report date':
-												$html = '<span class="reportDate">Dates: '.date($aweSettings['awe_txtDateFormat'],$tDateStart).' to '.date($aweSettings['awe_txtDateFormat'],$tDateEnd).'</span>';
+												$html = '<span class="reportDate">Dates: '.strftime($aweSettings['awe_txtDateFormat'],$tDateStart).' to '.strftime($aweSettings['awe_txtDateFormat'],$tDateEnd).'</span>';
 												break;
 											case 'reporting officer':
 												$uid = $this->session->userdata('userid');
@@ -435,9 +435,9 @@ class Report extends Report_base {
 								'report_date_end' => strtotime($tDateEnd),
 								'report_author' => $this->session->userdata('userid'),
 								'report_data' => serialize($dataArray),
-								'report_data' => $htmlMail,
+								//'report_data' => $htmlMail,
 								'report_status' => 'published',
-								'report_template' => $aweSetting['awe_ActiveTemplate'],
+								'report_template' => $aweSettings['awe_ActiveTemplate'],
 								'report_date_sent' => now()
 							);
 								
@@ -591,12 +591,14 @@ class Report extends Report_base {
 						'class' => 'button-sec',
 						'name' => 'submit',
 						'value' => 'save',
+						'id' => 'save',
 						'content' => ucwords('Save Report')),
 					'update' => array(
 						'type' => 'submit',
 						'class' => 'button-sec',
 						'name' => 'submit',
 						'value' => 'update',
+						'id' => 'save',
 						'content' => ucwords('Update Report')),
 					'delete' => array(
 						'type' => 'submit',
@@ -792,8 +794,8 @@ class Report extends Report_base {
 						}
 						$sReports[$row->report_id] = array(
 										   'id' => $row->report_id,
-										   'dateStart' =>  date('n/j/Y',$row->report_date_start),
-										   'dateEnd' =>  date('n/j/Y',$row->report_date_end),
+										   'dateStart' =>  strftime('n/j/Y',$row->report_date_start),
+										   'dateEnd' =>  strftime('n/j/Y',$row->report_date_end),
 										   'author' => $author_id,
 										   'selected' => $sel
 										  );
@@ -1241,25 +1243,27 @@ class Report extends Report_base {
 				
 				//go over archive list:
 				$archive = $this->awe->get_archived_reports('',$min);
-
+				$dateFormat = $aweSettings['awe_txtDateFormat'];
 				if ($archive->num_rows() > 0) {
 					foreach ($archive->result() as $item) {
 						$curruserid = $item->report_author;
 						$currchar = $this->char->get_character($curruserid);
 						$curruser = $this->user->get_user($curruserid);
-			
+							
+						
+						
 						//get the current user (reporting officer):
 						$posts = $this->pos->get_position($currchar->position_1);
 						$positions = ($posts !== FALSE) ? $posts->pos_name : '';
 						if ((int)($currchar->position_2)>0) {
 							$positions .= " & ".$this->pos->get_position($currchar->position_2, 'pos_name');
 						}
-						if ((empty($item->report_date_start)) || (empty($item->report_date_end))) {
+						if ((($item->report_date_start <= 100)) || (($item->report_date_end <= 100))) {
 							$dStart = '';
 							$dEnd = '';
 						} else {
-							$dStart = date($aweSettings['awe_txtDateFormat'],$item->report_date_start);
-							$dEnd = date($aweSettings['awe_txtDateFormat'],$item->report_date_end);
+							$dStart = strftime($dateFormat,(int)($item->report_date_start));
+							$dEnd = strftime($dateFormat,(int)($item->report_date_end));
 
 						}
 						$data['archive'][$item->report_id] = array(
@@ -1328,9 +1332,7 @@ class Report extends Report_base {
 				break; /* ARCHIVE */
 		} /* END SWITCH URI SEGMENT */
 
-		/** ============ **/
 		/** DISPLAY VIEW **/
-		/** ============ **/
 
 
 		$view_loc = view_location($currpage, $this->skin, 'admin');

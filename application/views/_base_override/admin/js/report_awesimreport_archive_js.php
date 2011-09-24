@@ -10,14 +10,14 @@
 
 $(document).ready(function(){
  
-/*
+
      $("a[rel*=publish]").click(function() {
         var imgPub = '<?php echo base_url().img_location('user-accept.png', $this->skin, 'admin'); ?>';
         var imgUnpub = '<?php echo base_url().img_location('user-reject.png', $this->skin, 'admin'); ?>';
         var action = $(this).attr('myAction');
             var id = $(this).attr('myID');
 
-         alert(action + ' > ' + id);
+//         alert(action + ' > ' + id);
 
             $.ajax({
                 beforeSend: function(){
@@ -32,7 +32,7 @@ $(document).ready(function(){
                 success: function(data){
 //                  alert(data);
                     if (data=='success') {
-                        alert(data);
+//                        alert(data);
                         if (action == 'publish') {
                             $('#pub' + id + ' a').attr('myAction','unpublish');
                             $('#pub' + id + ' img').attr('src',imgPub);
@@ -56,7 +56,7 @@ $(document).ready(function(){
             return false;
             
         });
-*/
+
     $("a[rel*=preview]").click(function() {
         var myID = $(this).attr('myID');
         var myTemplID = $(this).attr('myTemplID');

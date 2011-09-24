@@ -33,7 +33,7 @@
 <div id='ajaxnotice' class='hidden'></div>
 
 <br />
-<?php
+<?php	
     //pagination:
     if ($pages > 1) {
         echo '<table class="table100" align="center">';
@@ -89,11 +89,11 @@
                 <span class="fontTiny"><?php echo anchor('personnel/user/'.$item['repofficer_userid'], 'User Account'); ?> | <?php echo anchor('personnel/character/'. $item['repofficer_charid'], 'Character Bio'); ?></span>
                 </td>
                 <td class="col_75" align='center'>
-                    <div id='pub<?php echo $item['id'] ?>'>
+                    <div id='pub<?php echo $item['id'] ?>'><?php /*echo $item['display'].'<br><br>';*/ ?>
 <?php           if ($item['display']=='hidden') { ?>
-                    <a href="#" rel="publish" myAction="publish" myID="<?php echo $item['id'];?>" class="image"><?php echo img($images['icons']['hidden']);?></a> 
+                    <a href="#" rel="publish" myAction="publish" myID="<?php echo $item['id'];?>" class="image" title="<?php echo $item['display']; ?>"><?php echo img($images['icons']['hidden']);?></a> 
 <?php           } else { ?>
-                    <a href="#" rel="publish" myAction="unpublish" myID="<?php echo $item['id'];?>" class="image"><?php echo img($images['icons']['published']);?></a> 
+                    <a href="#" rel="publish" myAction="unpublish" myID="<?php echo $item['id'];?>" class="image" title="<?php echo $item['display']; ?>"><?php echo img($images['icons']['published']);?></a> 
 <?php           }   ?>
                     </div>
                     <div id="saving<?php echo $item['id'] ?>" class="hidden"><?php echo img($images['icons']['loading']);?></div>

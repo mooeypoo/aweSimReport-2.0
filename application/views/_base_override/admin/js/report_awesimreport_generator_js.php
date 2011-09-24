@@ -52,7 +52,7 @@ $(document).ready(function(){
 		genMessage += 'Email Subject: <?php print $email["mailsubject"]; ?>\n\n';
 		genMessage += 'Are you sure you want to generate and send this report?';
 		if (confirm(genMessage)) {
-			var loc ='<?php echo site_url('report/awesimreport/generator'); ?>';
+			var loc ='<?php echo site_url('report/awesimreport/generator/'); ?>';
 			$('#frmGenerate').attr('target', ''); //open the form in a new window
 			$('#frmGenerate').attr('action',loc);
 			$('#frmGenerate').get(0).setAttribute('action', loc);
@@ -60,15 +60,15 @@ $(document).ready(function(){
 	});
 	
 	$('#save').click(function(){
-	<?php 	if ($this->uri->segment(4) !== FALSE) { ?>
-		var loc ='<?php echo site_url('report/awesimreport/generator').$this->uri->segment(4) ?>';
+	<?php 	if ($this->uri->segment(4) > 0) { ?>
+		var locsave ='<?php echo site_url('report/awesimreport/generator/').$this->uri->segment(4) ?>';
 	<?php	} else {  ?>
-		var loc ='<?php echo site_url('report/awesimreport/generator'); ?>';
+		var locsave ='<?php echo site_url('report/awesimreport/generator/'); ?>';
 	<?php	} ?>
 
-		$('#frmGenerate').attr('target', ''); //open the form in a new window
-		$('#frmGenerate').attr('action',loc);
-		$('#frmGenerate').get(0).setAttribute('action', loc);
+			$('#frmGenerate').attr('target', ''); //open the form in a new window
+			$('#frmGenerate').attr('action',locsave);
+			$('#frmGenerate').get(0).setAttribute('action', locsave);
 	});
 	
 	$('#preview').click(function(){
@@ -105,7 +105,7 @@ $(document).ready(function(){
             },
             style: {
                 tip: true, // Give it a speech bubble tip with automatic corner detection
-                name: 'cream'
+                name: 'dark'
             }
         });
     });
