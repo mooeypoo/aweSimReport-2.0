@@ -20,7 +20,10 @@ class Ajax extends Ajax_base {
 		parent::Ajax_base();
 	}
 	
-	/*== AWESIMREPORT FUNCTIONS ==*/
+	/** ====================== **/	
+	/** aweSimReport FUNCTIONS **/
+	/** ====================== **/	
+
 
 	
 	
@@ -67,52 +70,38 @@ class Ajax extends Ajax_base {
 	} /* end awe_add_section */
 		
 	function awe_preview_report() {
-		$head = "Preview Report";
-		/* data being sent to the facebox */
-		$data['header'] = $head;
+		if (IS_AJAX) {
+	
+			$repID = $this->input->post('repID', TRUE);
+			$templID = $this->input->post('templID', TRUE);
+			$dateSent = $this->input->post('dateSent', TRUE);
+	
+			$data['params']['repID'] = $repID;
+			$data['params']['templID'] = $templID;
 
-//		$data['inputsdata'] = $this->uri->segment(3);
-//		$data['inputsdata'] = $this->input->post('inputsdata');
+			$settings_array = array(
+				'awe_txtDateFormat',
+			);
+			$aweSettings = $this->settings->get_settings($settings_array);
 
-		$tDateStart = $this->input->post('txtReportDateStart', TRUE);
-		$tDateEnd = $this->input->post('txtReportDateEnd', TRUE);
-		$arrRosterUsers = $this->input->post('chkRosterShowUsers', TRUE);
-		$arrRosterAttendance = $this->input->post('rAttendance', TRUE);
-		$arrSections = $this->input->post('sections', TRUE);
+			$data['report']['dateSent'] = date($aweSettings['awe_txtDateFormat'],$dateSent);
+			
+			$head = "Archived Report (ID# ".$repID.')';
+			/* data being sent to the facebox */
+			$data['header'] = $head;
 
-		$varlist = 'tDateStart='.$tDateStart.'&tDateEnd='.$tDateEnd;
-
-		//prepare the variable list for the iframe:
-		$varRosterUsers = '';
-		foreach ($arrRosterUsers as $key => $val) {
-			$varRosterUsers .= 'arrRosterUsers['.$key.']='.$val.'&';
+			/* figure out the skin */
+			$skin = $this->session->userdata('skin_admin');
+					
+			/* figure out where the view should come from */
+			$ajax = ajax_location('awe_preview_report', $skin, 'admin');
+					
+			/* write the data to the template */
+			$this->template->write_view('content', $ajax, $data);
+					
+			/* render the template */
+			$this->template->render();
 		}
-
-		$varRosterAttendance = '';
-		foreach ($arrRosterAttendance as $key => $val) {
-			$varRosterAttendance .= 'arrRosterAttendance['.$key.']='.$val.'&';
-		}
-
-		$varSections = '';
-		foreach ($arrSections as $key => $val) {
-			$varSections .= 'arrSections['.$key.']='.nl2br(str_replace(' ','+',$val)).'&';
-		}
-
-		$varlist = $varRosterUsers.$varRosterAttendance.$varSections.'tDateStart='.$tDateStart.'&tDateEnd='.$tDateEnd;
-
-		$data['varlist'] = $varlist;
-		/* figure out the skin */
-		$skin = $this->session->userdata('skin_admin');
-				
-		/* figure out where the view should come from */
-		$ajax = ajax_location('awe_preview_report', $skin, 'admin');
-				
-		/* write the data to the template */
-		$this->template->write_view('content', $ajax, $data);
-				
-		/* render the template */
-		$this->template->render();
-
 	}
 	function awe_preview_report_output() {
 		
@@ -126,13 +115,6 @@ class Ajax extends Ajax_base {
 		$this->load->model('news_model', 'news');
 		$this->load->model('users_model', 'user');
 
-		//get all variables
-		$tDateStart = $this->input->post('txtReportDateStart', TRUE);
-		$tDateEnd = $this->input->post('txtReportDateEnd', TRUE);
-		$arrRosterUsers = $this->input->post('chkRosterShowUsers', TRUE);
-		$arrRosterAttendance = $this->input->post('rAttendance', TRUE);
-		$arrSections = $this->input->post('sections', TRUE);
-		
 		// grab the settings 
 		$settings_array = array(
 			'sim_name','awe_txtSimStart','awe_txtSimEnd','awe_txtDateFormat','awe_txtEmailSubject','awe_txtReportTitle',
@@ -141,13 +123,51 @@ class Ajax extends Ajax_base {
 			'awe_chkShowRankImagesRoster','awe_chkShowRankImagesCOC','awe_ActiveTemplate','awe_txtTemplateFooter',
 		);
 		$aweSettings = $this->settings->get_settings($settings_array);
-		
+
 		//get current template
 		$tmplID = $aweSettings['awe_ActiveTemplate'];		
+
+		//get all variables
+		$tDateStart = $this->input->post('txtReportDateStart', TRUE);
+		$tDateEnd = $this->input->post('txtReportDateEnd', TRUE);
+		$arrRosterUsers = $this->input->post('chkRosterShowUsers', TRUE);
+		$arrRosterAttendance = $this->input->post('rAttendance', TRUE);
+		$arrSections = $this->input->post('sections', TRUE);
+
+		//see if this is a 'load file' request, and replace the vars
+		if ((($this->uri->segment(3)) > 0)) {
+			//structure: ajax/awe_preview_report_output/reportID/templateID
+			$reportID = $this->uri->segment(3);
+			//check if report exists in db:
+			$rep = $this->awe->get_saved_report_details($reportID);
+			if ($rep !== FALSE) {
+				//report exists. Load it:
+				$repData = unserialize($rep->report_data);
+				
+				$tDateStart = date('n/j/Y',$rep->report_date_start);
+				$tDateEnd =  date('n/j/Y',$rep->report_date_end);
+				$arrRosterUsers = $repData['ShowUsers'];
+				$arrRosterAttendance = $repData['UserAttendance'];
+				$arrSections = $repData['CustomSections'];
+				
+			} else {
+				print 'ERROR: The report you\'re looking for has not been found. Check your link and try again.';
+			}
+			
+			$templateID = $this->uri->segment(4);
+			if ($this->awe->get_template_content($templateID) !== FALSE) {
+				$tmplID = $templateID;		
+			}
+
+		}
+		
+		
+		//LOAD THE TEMPLATE
 		$template = $this->awe->get_template_content($tmplID); 
-		
-/*		print_r($_POST); */
-		
+		if ($template === FALSE) {
+			print "The requested template cannot be found. Please make sure you picked a correct template from the 'templates' section.<br />";
+		}
+
 		//prepare output array:
 		$tOutput = array();
 
@@ -217,9 +237,9 @@ class Ajax extends Ajax_base {
 							} //end if coc has records
 							$html = $cocHtml;
 							break;
-						case 'report date':
+					/*	case 'report date':
 							$html = '<span class="reportDate">Dates: '.date($aweSettings['awe_txtDateFormat'],$tDateStart).' to '.date($aweSettings['awe_txtDateFormat'],$tDateEnd).'</span>';
-							break;
+							break;*/
 						case 'reporting officer':
 							$uid = $this->session->userdata('userid');
 							$charid = $this->user->get_main_character($uid);
@@ -322,7 +342,8 @@ class Ajax extends Ajax_base {
 							
 							
 							$html ='';
-							$html = $this->awe->template_make_roster_html($characters,$aweSettings['awe_chkPresenceTags'],$arrRosterAttendanceTags,$aweSettings['awe_chkShowRankImagesRoster']);
+							$html = '<span class="reportDate">Dates: '.date($aweSettings['awe_txtDateFormat'],$tDateStart).' to '.date($aweSettings['awe_txtDateFormat'],$tDateEnd).'</span>';
+							$html .= $this->awe->template_make_roster_html($characters,$aweSettings['awe_chkPresenceTags'],$arrRosterAttendanceTags,$aweSettings['awe_chkShowRankImagesRoster']);
 							break;
 						case 'statistics':
 							$html ='';
@@ -348,7 +369,9 @@ class Ajax extends Ajax_base {
 				echo $this->awe->template_replace_tag($template['section_content'],'%%section_content%%',$sec['html']);
 			}
 		}
-		
+		$credits = '<div style="font-size: 80%;">Report generated by <a href="https://github.com/mooeypoo/aweSimReport-2.0" target="_blank">aweSimReport Generator.</a></div>';
+		echo  $this->awe->template_replace_tag($template['section_content'],'%%section_content%%',$credits);
+	
 		echo $this->awe->template_replace_tag($template['footer'],'%%footer%%',$aweSettings['awe_txtTemplateFooter']);
 
 	}
@@ -778,7 +801,28 @@ class Ajax extends Ajax_base {
 		
 	} //end awe_tooltip_saved_report
 	
-	/*== END AWESIMREPORT FUNCS ==*/
+	
+	/* ARCHIVE */
+	function awe_publish_archive() {
+		if (IS_AJAX) {
+			/* load the resources */
+			$this->load->model('awesimreport_model', 'awe');
+			$nID = $this->input->post('tid');
+			$action = $this->input->post('act');
+			
+			if ($action=='unpublish') { $stat = 'hidden'; }
+			else { $stat = 'published'; }
+			$update_array = array('report_status' => $stat);
+			$update = $this->aws->update_saved_report($nID,$update_array); 
+			if ($update>0) { echo 'success'; }
+			else { echo 'fail'; }
+		}
+	}
+	
+	/** ========================== **/	
+	/** END aweSimReport FUNCTIONS **/
+	/** ========================== **/	
+
 	
 }
 

@@ -36,8 +36,27 @@ $(document).ready(function(){
 	});
 	
 	$('#submitGenerate').click(function(){
-		alert('Coming soon, stay tuned!');
-		return false;
+		var genMessage  = 'You chose to generate this report with the following settings:\n\n';
+<?php	if ($RosterActive > 0) { ?>
+		if (($('#txtReportDateStart').val()=='') || ($('#txtReportDateEnd').val()=='')) {
+			alert('You chose to have a Roster, but you did not fill out dates.\n Please go back and choose dates for this report period.');
+			return false;
+		}
+		genMessage += 'Dates: ' + $('#txtReportDateStart').val() + ' to ' + $('#txtReportDateEnd').val() + '\n';
+<?php	} ?>		
+<?php	if ((empty($email["mailsubject"])) || (empty($email["mailrecipients"]))) { ?>
+			alert('The Email settings you have provided are insufficient. Please go to "Settings" and choose an Email Subject and Email Recepients.');
+			return false;
+<?php	} ?>
+		genMessage += 'Email Recepients: <?php print implode(', ',$email["mailrecipients"]); ?>\n';
+		genMessage += 'Email Subject: <?php print $email["mailsubject"]; ?>\n\n';
+		genMessage += 'Are you sure you want to generate and send this report?';
+		if (confirm(genMessage)) {
+			var loc ='<?php echo site_url('report/awesimreport/generator'); ?>';
+			$('#frmGenerate').attr('target', ''); //open the form in a new window
+			$('#frmGenerate').attr('action',loc);
+			$('#frmGenerate').get(0).setAttribute('action', loc);
+		}
 	});
 	
 	$('#save').click(function(){

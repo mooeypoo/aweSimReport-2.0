@@ -110,6 +110,13 @@ class Awesimreport_model extends Model {
 
 	
 
+	function count_archive() {
+		//don't show saved reports that aren't published
+		$this->db->where('report_status !=', 'saved');
+		$query = $this->db->get('awe_saved_reports');
+		return $this->db->count_all_results();
+	}
+
 	function get_saved_reports($status ='active') {
 		$query = $this->db->get_where('awe_saved_reports', array('report_status' => $status));
 		if ($query->num_rows() > 0) {
@@ -139,7 +146,46 @@ class Awesimreport_model extends Model {
 			return FALSE;
 		}
 	}
-	
+
+
+	function get_archived_reports($status = 'all',$limmin = 1,$recnum = 10) {
+	     /*
+		 param1  => 'y','n'
+		 param2  => number 
+		 param3  => number
+	     */
+	     $this->db->from('awe_saved_reports');
+		if ($status=='all') { //return all archived results
+			$this->db->where('report_status !=', 'saved');
+		} else {
+			$this->db->where('report_status', $status);
+		}
+		$this->db->limit($recnum,$limmin);
+		$query = $this->db->get();
+		
+		return $query;
+	}
+     
+	 function get_template($id = '', $return = '') {
+	     $query = $this->db->get_where('awreport_templates', array('tem_id' => $id));
+	     
+	     $row = ($query->num_rows() > 0) ? $query->row() : FALSE;
+	     
+	     if (!empty($return) && $row !== FALSE) {
+		 if (!is_array($return)) {
+		     return $row->$return;
+		 } else {
+		     $array = array();
+		     foreach ($return as $r) {
+			 $array[$r] = $row->$r;
+		     }
+		     return $array;
+		 }
+	     }
+	     return $row;
+	 }
+
+
 	
 	
 	/*
@@ -258,6 +304,7 @@ class Awesimreport_model extends Model {
 		
 		return $query;
 	}
+
 
 	function update_saved_report($id = '', $data = '') {
 		$this->db->where('report_id', $id);

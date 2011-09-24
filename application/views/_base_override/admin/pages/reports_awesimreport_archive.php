@@ -1,6 +1,6 @@
 <?php echo text_output($header, 'h1', 'page-head');?>
 
-<?php /** MENU **/ ?>
+<?php /** MENU  **/ ?>
 <div id="awe_mainmenu">
 	<div id="awe_menuitem">
 		<a href="<?php echo site_url('report/awesimreport/generator'); ?>">
@@ -29,12 +29,113 @@
 	</div>
 </div>
 <?php /** END MENU **/ ?>
+<div id="saving" class="hidden"><?php echo img($images['loading']);?><?php echo 'Processing...';?>...</div>
+<div id='ajaxnotice' class='hidden'></div>
 
+<br />
+<?php
+    //pagination:
+    if ($pages > 1) {
+        echo '<table class="table100" align="center">';
+        echo '<tr><td colspan=\'5\' align=\'center\'>';
+        echo '<table><tr>';
+//      echo '<td>Pages: </td>';
+        if ($pg > 1) { //not last
+            echo '<td>'.anchor('report/awesimreport/archive/'.($pg - 1), '<').'</td>';
+        }
+        for ($i=1; $i<=$pages; $i++) {
+            if ($i == $pg) { 
+                echo '<td style="font-size: 110%;"><b>'.$i.'</b></td>';
+            } else {
+                echo '<td>'.anchor('report/awesimreport/archive/'.$i, $i).'</td>';
+            }
+        }
+        if ($pg != $pages) { //not last
+            echo '<td>'.anchor('report/awesimreport/archive/'.($pg + 1), '>').'</td>';
+        }
+        echo '</tr></table>';
+        echo '</td></tr>';
+        echo '</table>';
+    }
+?>
+<table class="zebra table100" align="center">
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>Date Range</th>
+            <th>Reporting Officer</th>
+            <th>Display</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+<?php   if (!empty($archive)) {
+            $counter=($pg*10 - 10) + 1;
+            foreach ($archive as $item) { ?>
+            <tr>
+                <td><?php echo $counter; ?></td>
+	                <td align="center">
+<?php /*			<a href="<?php echo site_url('ajax/awe_preview_report_output/'.$item['id'].'/'.$item['template']);?>" target="_blank">*/ ?>
+			<a rel='preview' href="#" myID='<?php echo $item['id']; ?>' myTemplID='<?php echo $item['template']; ?>' myDateSent='<?php echo $item['date_sent']; ?>'>
+<?php		if ((empty($item['date_start'])) || (empty($item['date_start']))) { ?>
+				No date selected.
+<?php		} else { ?>
+				<?php echo $item['date_start'].' to '.$item['date_end']; ?>
+<?php		} ?>
+			</a>
+			</td>
+                <td><?php echo $item['repofficer']; ?><br />
+                <span class="fontTiny"><?php echo $item['repofficer_position']; ?></span><br />
+                <span class="fontTiny"><?php echo anchor('personnel/user/'.$item['repofficer_userid'], 'User Account'); ?> | <?php echo anchor('personnel/character/'. $item['repofficer_charid'], 'Character Bio'); ?></span>
+                </td>
+                <td class="col_75" align='center'>
+                    <div id='pub<?php echo $item['id'] ?>'>
+<?php           if ($item['display']=='hidden') { ?>
+                    <a href="#" rel="publish" myAction="publish" myID="<?php echo $item['id'];?>" class="image"><?php echo img($images['icons']['hidden']);?></a> 
+<?php           } else { ?>
+                    <a href="#" rel="publish" myAction="unpublish" myID="<?php echo $item['id'];?>" class="image"><?php echo img($images['icons']['published']);?></a> 
+<?php           }   ?>
+                    </div>
+                    <div id="saving<?php echo $item['id'] ?>" class="hidden"><?php echo img($images['icons']['loading']);?></div>
+                </td>
+                <td class="col_75" align='center'>
+                    <?php echo img($images['icons']['delete']);?>
+                </td>
+            </tr>
+<?php       
+                $counter++;
+            }
+        } else { ?>
+            <tr><td colspan="4">No archived reports found.</td></tr>
+<?php   } ?>
+    </tbody>
+</table>
 
-
-
-
-
+<?php
+    //pagination:
+    if ($pages > 1) {
+        echo '<table class="table100" align="center">';
+        echo '<tr><td colspan=\'5\' align=\'center\'>';
+        echo '<table><tr>';
+//      echo '<td>Pages: </td>';
+        if ($pg > 1) { //not last
+            echo '<td>'.anchor('report/awesimreport/archive/'.($pg - 1), '<').'</td>';
+        }
+        for ($i=1; $i<=$pages; $i++) {
+            if ($i == $pg) { 
+                echo '<td style="font-size: 110%;"><b>'.$i.'</b></td>';
+            } else {
+                echo '<td>'.anchor('report/awesimreport/archive/'.$i, $i).'</td>';
+            }
+        }
+        if ($pg != $pages) { //not last
+            echo '<td>'.anchor('report/awesimreport/archive/'.($pg + 1), '>').'</td>';
+        }
+        echo '</tr></table>';
+        echo '</td></tr>';
+        echo '</table>';
+    }
+?>
 
 
 <br />

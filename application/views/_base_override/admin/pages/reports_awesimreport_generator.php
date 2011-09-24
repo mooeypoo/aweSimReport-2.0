@@ -32,6 +32,7 @@
 <div id="saving" class="hidden"><?php echo img($images['loading']);?><?php echo 'Processing...';?>...</div>
 <div id='ajaxnotice' class='hidden'></div>
 
+
 <br />
 	<?php //print_r($savedReports); ?>
 	<div id='savedReports'>
@@ -43,11 +44,6 @@
 				<a href="<?php print base_url(); ?>index.php/report/awesimreport/generator/<?php echo $key; ?>" class="<?php print $class; ?>" myid="<?php echo $key; ?>" myauthor="<?php echo $val['author']?>" mydates="<?php echo $val['dateStart'].'-'.$val['dateEnd']; ?>">
 					Report <?php print $key; ?>
 				</a>
-<?php /* ?>
-			<div id="report" class="<?php print $class; ?>" myID="<?php echo $key; ?>">
-				<?php echo anchor('report/awesimreport/generator/'. $key, 'Saved Report '.$key);?><br />
-			<span style="font-size: 80%;"><?php echo date('n/j/Y',$val['dateStart']).'-'.date('n/j/Y',$val['dateEnd']) ?></span>
-			</div> */ ?>
 <?php
 		}
 	}  ?>
