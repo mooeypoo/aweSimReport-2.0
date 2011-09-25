@@ -132,7 +132,7 @@ INSERT INTO `nova_settings` (`setting_key`, `setting_value`, `setting_label`, `s
 ('awe_txtReportingOfficer', '0', 'aweSimReport - Reporting Officer (Alternative Title)', 'y'),
 ('awe_txtDateFormat', '24%y%m.%j', 'aweSimReport - Date Format', 'y'),
 ('awe_txtEmailSubject', 'Sim Report for USS Awesome', 'aweSimReport - Email Subject', 'y'),
-('awe_txtEmailRecipients', 'moriel@gmail.com, jazza@subspacerelay.net', 'aweSimReport - Recipients', 'y'),
+('awe_txtEmailRecipients', 'email@address.com, email2@someaddress.com', 'aweSimReport - Recipients', 'y'),
 ('awe_chkPresenceTags', 'checked', 'aweSimReport - Display Presence Tags', 'y'),
 ('awe_txtPresenceTag_Present', 'P', 'aweSimReport - Presence Tags (Present)', 'y'),
 ('awe_txtPresenceTag_Unexcused', 'U', 'aweSimReport - Presence Tags (Unexcused absence)', 'y'),

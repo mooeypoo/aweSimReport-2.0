@@ -395,6 +395,8 @@ class Report extends Report_base {
 												$html = $this->awe->template_make_roster_html($characters,$aweSettings['awe_chkPresenceTags'],$arrRosterAttendanceTags,$aweSettings['awe_chkShowRankImagesRoster']);
 												break;
 											case 'statistics':
+												//generate stats based on report duration
+												
 												$html ='';
 												break;
 											default: //freetext
@@ -781,24 +783,26 @@ class Report extends Report_base {
 				//display saved reports:
 				$savedReports = $this->awe->get_saved_reports('saved');
 				$sReports = array();
-				if ($savedReports->num_rows() > 0) {
-					foreach ($savedReports->result() as $row) {
-						$author_id = 0;
-						$author = $this->user->get_user($row->report_author);
-						if ($author!==FALSE) {
-							$author_id = $author->name;
+				if ($savedReports !== FALSE) {
+					if ($savedReports->num_rows() > 0) {
+						foreach ($savedReports->result() as $row) {
+							$author_id = 0;
+							$author = $this->user->get_user($row->report_author);
+							if ($author!==FALSE) {
+								$author_id = $author->name;
+							}
+							$sel = '';
+							if ($id == $row->report_id) {
+								$sel='selected';
+							}
+							$sReports[$row->report_id] = array(
+											   'id' => $row->report_id,
+											   'dateStart' =>  strftime('n/j/Y',$row->report_date_start),
+											   'dateEnd' =>  strftime('n/j/Y',$row->report_date_end),
+											   'author' => $author_id,
+											   'selected' => $sel
+											  );
 						}
-						$sel = '';
-						if ($id == $row->report_id) {
-							$sel='selected';
-						}
-						$sReports[$row->report_id] = array(
-										   'id' => $row->report_id,
-										   'dateStart' =>  strftime('n/j/Y',$row->report_date_start),
-										   'dateEnd' =>  strftime('n/j/Y',$row->report_date_end),
-										   'author' => $author_id,
-										   'selected' => $sel
-										  );
 					}
 				}
 				$data['savedReports'] = $sReports;
