@@ -11,3 +11,152 @@
 For instructions, please visit https://github.com/mooeypoo/aweSimReport-2.0/wiki
 
 Please submit bug reports and requests at https://github.com/mooeypoo/aweSimReport-2.0/issues
+
+###################
+#  CONTENTS OF THIS FILE    
+###################
+
+1. FILE STRUCTURE
+2. INSTALLATION
+	A. MODIFYING NOVA CONTROLLERS
+	B. UPLOADING aweSimReport FILES
+	C. SETTING UP THE DATABASE
+	D. SETTING UP THE EXTENSION
+3. BUG REPORTS
+	
+###################
+#  1. FILE STRUCTURE 
+###################
+
+aweSimReport v2 is an extension for Anodyne's Nova RPG System. The structure below corresponds to Nova's file structure. 
+Files that are marked with [*] are files that are already in use in the Nova system and were modified. 
+You should be extra careful copying over these files!
+
+** PLEASE MAKE SURE YOU KNOW WHAT YOU ARE DOING WHEN INSTALLING NOVA EXTENSIONS!**
+
+- APPLICATION
+---- ASSETS
+-------- aweSimReportTemplates
+------------- clouds
+------------- helvetica
+------------- industrial
+-------- css
+------------- awesimreport_general.css
+-------- images
+------------- awesimreport
+-------- js
+------------- jquery.maskedinput-1.3.min.js
+---- CONTROLLERS
+-------- ajax.php [*]
+-------- report.php [*]
+-------- sim.php [*]
+---- MODELS
+-------- awesimreport_model.php
+---- VIEWS
+-------- _base_override
+------------- admin
+------------- main
+- awesimreport.sql
+
+###################
+#  2. INSTALLATION
+###################
+
+** PLEASE NOTE **
+Most of aweSimReport v2 files are new to the system. Copying the entire file structure over to the Nova "APPLICATION" path should be safe with all folders OTHER THAN THE CONTROLLERS!
+Please take extra care while installing the CONTROLLERS. These require MODIFYING nova's files, especially if your installation already has previous extensions!
+*******************
+
+	A. MODIFYING NOVA CONTROLLERS
+	=====================
+
+	1. REPORT CONTROLLER:
+		Open the aweSimReport report controller at <aweSimReport>/application/controllers/report.php
+			For your convenience, the aweSimReport required functions are encased between two big comment tags. 
+			Mark *everything* between the tag:
+			/** ====================== **/	
+			/** aweSimReport FUNCTIONS **/
+			/** ====================== **/	
+			
+			and up to the comment tag
+			/** ========================== **/	
+			/** END aweSimReport FUNCTIONS **/
+			/** ========================== **/	
+			
+		Open the NOVA report controller at <nova path>/application/controllers/report.php
+			Paste the code you copied from the aweSimReport version of the controller into the report class.
+			** It must be inside the class! **
+		
+	2. AJAX CONTROLLER: ((REPEAT THE ABOVE FOR THE AJAX CONTROLLER))
+		Open the aweSimReport ajax controller at <aweSimReport>/application/controllers/ajax.php
+			For your convenience, the aweSimReport required functions are encased between two big comment tags. 
+			Mark *everything* between the tag:
+			/** ====================== **/	
+			/** aweSimReport FUNCTIONS **/
+			/** ====================== **/	
+			
+			and up to the comment tag
+			/** ========================== **/	
+			/** END aweSimReport FUNCTIONS **/
+			/** ========================== **/	
+			
+		Open the NOVA report controller at <nova path>/application/controllers/ajax.php
+			Paste the code you copied from the aweSimReport version of the controller into the report class.
+			** It must be inside the class! **
+
+	3. SIM CONTROLLER: ((REPEAT THE ABOVE FOR THE SIM CONTROLLER))
+		Open the aweSimReport ajax controller at <aweSimReport>/application/controllers/sim.php
+			For your convenience, the aweSimReport required functions are encased between two big comment tags. 
+			Mark *everything* between the tag:
+			/** ====================== **/	
+			/** aweSimReport FUNCTIONS **/
+			/** ====================== **/	
+			
+			and up to the comment tag
+			/** ========================== **/	
+			/** END aweSimReport FUNCTIONS **/
+			/** ========================== **/	
+			
+		Open the NOVA report controller at <nova path>/application/controllers/sim.php
+			Paste the code you copied from the aweSimReport version of the controller into the report class.
+			** It must be inside the class! **
+
+	B. UPLOADING aweSimReport FILES
+	=====================
+	After modifying the controllers that already exist in the Nova (step 2A) you can continue by uploading the folder list (WITHOUT THE CONTROLLER FOLDER!!) into nova folder.
+	That is, the <aweSimReport>/application/ content can be uploaded to <nova path>/application/
+
+	************* PLEASE NOTE **********************
+	DO NOT (!!!!) COPY THE CONTROLLER FOLDER!!!
+	**************************************************
+
+	C. SETTING UP THE DATABASE
+	===================
+	Now that all the files are sorted out, you need to update the database. Use the awesimreport.sql file in the main aweSimReport extension folder to update the Nova database.
+	You can upload the file directly and have your mySQL system run it for you or execute the queries manually.
+
+	D. SETTING UP THE EXTENSION
+	===================
+	After the controllers were modified, the files uploaded and the database update is completed, you can now start using the extension.
+	The extension link menu will appear at the bottom of the administration submenu, under "Reports" as "aweSimReport v2".
+	
+	The first step you should consider is setting up proper settings for your report and your desired sections.
+	For a full guide and instructions see https://github.com/mooeypoo/aweSimReport-2.0/wiki
+
+###################
+#  3. BUG REPORTS
+###################
+If you encounter any bugs or if you have any suggestions or features to request, please submit them through the 'issues' tab on the aweSimReport github page.
+This will allow me to follow up on bugs properly and in an organized fashion and also let you see which were fixed or await fixing.
+
+###################
+#  4. BRIEF DISCLAIMER
+###################
+
+aweSimReport -- in its current and past versions -- is close to my heart, so I will continue development and bug corrections. 
+
+I would love to supply 24/7 support for this extension, but in reality I can't. I'm a college student with a job to maintain, so my time is limited. 
+
+Thank you for your cooperation and your patience. I hope you enjoy aweSimReport and continue to use it, report issues and suggest features for future versions!
+
+~Moriel Schottlender (aka mooeypoo)

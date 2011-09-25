@@ -23,9 +23,6 @@ class Ajax extends Ajax_base {
 	/** ====================== **/	
 	/** aweSimReport FUNCTIONS **/
 	/** ====================== **/	
-
-
-	
 	
 	/*=== SECTIONS ===*/
 
@@ -818,7 +815,7 @@ class Ajax extends Ajax_base {
 	}
 	
 	/** ========================== **/	
-	/** END aweSimReport FUNCTIONS **/
+	/**       END aweSimReport FUNCTIONS          **/
 	/** ========================== **/	
 
 	
