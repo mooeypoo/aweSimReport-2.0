@@ -16,16 +16,24 @@ Please submit bug reports and requests at https://github.com/mooeypoo/aweSimRepo
 #  CONTENTS OF THIS FILE    
 ###################
 
-1. FILE STRUCTURE
-2. INSTALLATION
+1. CURRENT VERSION
+2. FILE STRUCTURE
+3. INSTALLATION
 	A. MODIFYING NOVA CONTROLLERS
 	B. UPLOADING aweSimReport FILES
 	C. SETTING UP THE DATABASE
 	D. SETTING UP THE EXTENSION
-3. BUG REPORTS
+4. BUG REPORTS
+5. BRIEF DISCLAIMER
 	
 ###################
-#  1. FILE STRUCTURE 
+#  1. CURRENT VERSION
+###################
+This is the AlphaTest version of aweSimReport. When there is a version change, I will change this section of the README file so you can follow and see if you should upgrade.
+** This version is operational but is not yet fully tested! **
+
+###################
+#  2. FILE STRUCTURE 
 ###################
 
 aweSimReport v2 is an extension for Anodyne's Nova RPG System. The structure below corresponds to Nova's file structure. 
@@ -59,7 +67,7 @@ You should be extra careful copying over these files!
 - awesimreport.sql
 
 ###################
-#  2. INSTALLATION
+#  3. INSTALLATION
 ###################
 
 ** PLEASE NOTE **
@@ -144,13 +152,13 @@ Please take extra care while installing the CONTROLLERS. These require MODIFYING
 	For a full guide and instructions see https://github.com/mooeypoo/aweSimReport-2.0/wiki
 
 ###################
-#  3. BUG REPORTS
+#  4. BUG REPORTS
 ###################
 If you encounter any bugs or if you have any suggestions or features to request, please submit them through the 'issues' tab on the aweSimReport github page.
 This will allow me to follow up on bugs properly and in an organized fashion and also let you see which were fixed or await fixing.
 
 ###################
-#  4. BRIEF DISCLAIMER
+#  5. BRIEF DISCLAIMER
 ###################
 
 aweSimReport -- in its current and past versions -- is close to my heart, so I will continue development and bug corrections. 
