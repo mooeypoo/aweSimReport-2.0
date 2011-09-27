@@ -209,9 +209,14 @@ class Awesimreport_model extends Model {
 		return str_replace($tag_name, $tag_title, $content);
 	}
 	
-	function template_make_roster_html($charsArray,$useAttendance='',$attTags = '',$useRanks='') {
+	function template_make_roster_html($charsArray,$useAttendance='',$attTags = '',$useRanks='', $type='html') {
 		$output = '';
+		$plaintext = '';
+		$tab = '       ';
+		
 		//HEADER
+		$plaintext .= "======================================\r\n";
+
 		$output  = '<table cellspacing="0" cellpadding="0" width="100%" class="roster">';
 		$output .= '<thead>';
 		$output .= '<tr class="tblheader">';
@@ -221,9 +226,13 @@ class Awesimreport_model extends Model {
 		$output .= '<th colspan=2 align="center">Name</th>';
 		if ($useAttendance =='checked') {
 			$output .= '<th align="center">Presence</th>';
+			$plaintext .= 'Presence'.$tab;
 		}
 		$output .= '<th align="center">Log Count</th>';
+		$plaintext .= "Log Count\r\n";
+
 		$output .= '</tr>';
+		
 
 		//TABLE CONTENT:
 		$total_logcount = 0;
@@ -237,6 +246,8 @@ class Awesimreport_model extends Model {
 					if ($useRanks == 'checked') {
 						$output .= '<td width="70">'.img($char['rank_img']).'</td>';
 					}
+					$plaintext .= $char['char_name'].' ('.$char['position'].')'.$tab;
+					
 					$output .= '<td>'; //charname 
 					$output .= '<span class="charname">'.$char['char_name'].'</span><br />';
 					$output .= '<span class="userlinks" style="font-size: 80%">'.anchor('personnel/user/'. $char['id'], 'User Account').' | ';
@@ -252,13 +263,18 @@ class Awesimreport_model extends Model {
 						}
 						$output .= '<span class="attendance">'.$char['attendance'].'</span>';
 						$output .= '</td>';
+
+						$plaintext .= $char['attendance'].$tab;
 					}
 					$output .= '<td align="center">'; //logcount
 					$output .= '<span class="count">'.$char['totalcount'].'</span>';
 					$output .= '</td>'; 
 					
-					$total_logcount = $total_logcount + $char['totalcount'];
+					$plaintext .= $char['totalcount']."\r\n";
+					$plaintext .= "--------------------------\r\n";
 					
+					$total_logcount = $total_logcount + $char['totalcount'];
+				
 					$output .= '</tr>';
 				} //end foreach user
 			} //end if dept has users
@@ -266,8 +282,14 @@ class Awesimreport_model extends Model {
 
 		$output .= '<tr><td colspan=6 align="right" class="totalcount"> Total Logcount: '.$total_logcount.'</td></tr>';
 		$output .= '</table>';
+		$plaintext .= "======================================\r\n";
+		
+		$result = array(
+			'plain' => $plaintext,
+			'html' => $output
+		);
 
-		return $output;
+		return $result;
 	} 
 	/*
 	|---------------------------------------------------------------

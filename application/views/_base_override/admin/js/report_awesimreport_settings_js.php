@@ -12,24 +12,7 @@ $(document).ready(function(){
 		
 	$('table.zebra tbody > tr:nth-child(odd)').addClass('alt');
 
-	$.mask = {
-		//Predefined character definitions
-		definitions: {
-			'9': '[0-9]',
-			'h': '[0-1]',
-			'1': '[0-5]',
-			'_': '[ap]',
-		}
-	};	
-	$.mask.definitions['~']='[ap]';
-	$.mask.definitions['m']='[m]';
-	$("#txtSimStart").mask("h9:19_m"); 
-	$("#txtSimEnd").mask("h9:19_m"); 
-	$("#txtReportDuration").mask("9?99"); 
-
 	$('.button-main').live('click', function() {
-		var awe_txtSimStart = $('#txtSimStart').val();
-		var awe_txtSimEnd = $('#txtSimEnd').val();
 		var awe_txtDateFormat = $('#txtDateFormat').val();
 		var awe_txtReportDuration = $('#txtReportDuration').val();
 		var awe_txtEmailSubject = $('#txtEmailSubject').val();
@@ -50,8 +33,6 @@ $(document).ready(function(){
 			type: "POST",
 			url: "<?php echo site_url('ajax/awe_settings_save');?>",
 			data: { 
-				txtSimStart: awe_txtSimStart,
-				txtSimEnd: awe_txtSimEnd,
 				txtDateFormat: awe_txtDateFormat,
 				txtReportDuration: awe_txtReportDuration,
 				txtReportTitle: awe_txtReportTitle,

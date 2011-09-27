@@ -340,7 +340,8 @@ class Ajax extends Ajax_base {
 							
 							$html ='';
 							$html = '<span class="reportDate">Dates: '.strftime($aweSettings['awe_txtDateFormat'],$tDateStart).' to '.strftime($aweSettings['awe_txtDateFormat'],$tDateEnd).'</span>';
-							$html .= $this->awe->template_make_roster_html($characters,$aweSettings['awe_chkPresenceTags'],$arrRosterAttendanceTags,$aweSettings['awe_chkShowRankImagesRoster']);
+							$out = $this->awe->template_make_roster_html($characters,$aweSettings['awe_chkPresenceTags'],$arrRosterAttendanceTags,$aweSettings['awe_chkShowRankImagesRoster']);
+							$html = $out['html'];
 							break;
 						case 'statistics':
 							$html ='';

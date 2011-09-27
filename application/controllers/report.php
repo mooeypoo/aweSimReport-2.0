@@ -233,7 +233,7 @@ class Report extends Report_base {
 										$tOutput[$c]['title']  = $section->section_title;
 										switch (strtolower($section->section_name)) {
 											case 'chain of command':
-												
+												$plaintext = '';
 												$coc = $this->char->get_coc();
 												$defaultRankset = $this->ranks->get_rank_default();
 												$rank_ext = $this->ranks->get_rankcat($defaultRankset, 'rankcat_location', 'rankcat_extension');
@@ -250,13 +250,6 @@ class Report extends Report_base {
 																$charinf = $this->char->get_character($item->charid);
 																//get rank image:
 																$rankdata = $this->ranks->get_rank($charinf->rank, array('rank_name', 'rank_image'));
-															/*	$rank = $this->ranks->get_rankcat($defaultRankset);
-																/* build the rank image array 
-																$rank_img = array(
-																	'src' => rank_location($defaultRankset, $rankdata['rank_image'],$rank->rankcat_extension),
-																	'alt' => $rankdata['rank_name'],
-																	'class' => 'image');
-					*/
 																$img_rank = array(
 																/*	'src' => rank_location($this->rank, $item->rank_image, $rank_ext),*/
 																	'src' => rank_location($defaultRankset, $item->rank_image, $rank_ext),
@@ -280,15 +273,19 @@ class Report extends Report_base {
 															$cocHtml .= '<strong>'.anchor('personnel/character/'.$item->charid, $coc_name).'</strong><br />';
 															$cocHtml .= '<span style="size: 90%;">('.$coc_position.')</span>';
 															$cocHtml .= '</td>';
+															
+															$cocPlain = "* ".$coc_name." (".$coc_position.")\r\n";
 														}
 														$cocHtml .= '</tr>';
 													} //foreach coc item
 													$cocHtml .= '</table>';
 												} //end if coc has records
 												$html = $cocHtml;
+												$plaintext = $cocPlain;
 												break;
 											case 'report date':
 												$html = '<span class="reportDate">Dates: '.strftime($aweSettings['awe_txtDateFormat'],$tDateStart).' to '.strftime($aweSettings['awe_txtDateFormat'],$tDateEnd).'</span>';
+												$plaintext = 'Dates: '.strftime($aweSettings['awe_txtDateFormat'],$tDateStart).' to '.strftime($aweSettings['awe_txtDateFormat'],$tDateEnd)."\r\n";
 												break;
 											case 'reporting officer':
 												$uid = $this->session->userdata('userid');
@@ -304,6 +301,10 @@ class Report extends Report_base {
 												$html .= $positions.'<br />';
 												$html .= $aweSettings['sim_name'];
 												$html .= '</span>';
+												
+												$plaintext = $this->char->get_character_name($charid, TRUE)."\r\n";
+												$plaintext .=  $positions."\r\n";
+												$plaintext .= $aweSettings['sim_name']."\r\n";
 												break;
 											case 'roster':
 												$arrRosterAttendanceTags = '';
@@ -363,6 +364,7 @@ class Report extends Report_base {
 																'email' => $u->email,
 																'char_name' => $this->char->get_character_name($charid, TRUE),
 																'position' => $positions,
+																'rank_name' => $rankdata['rank_name'],
 																'rank_img' => $rank_img,
 																'charid' => $charid,
 																'attendance' => $arrRosterAttendance[$uid],
@@ -392,18 +394,23 @@ class Report extends Report_base {
 												
 												
 												$html ='';
-												$html = $this->awe->template_make_roster_html($characters,$aweSettings['awe_chkPresenceTags'],$arrRosterAttendanceTags,$aweSettings['awe_chkShowRankImagesRoster']);
+												$out = $this->awe->template_make_roster_html($characters,$aweSettings['awe_chkPresenceTags'],$arrRosterAttendanceTags,$aweSettings['awe_chkShowRankImagesRoster']);
+												$html = $out['html'];
+												$plaintext = $out['plain'];
 												break;
 											case 'statistics':
 												//generate stats based on report duration
 												
 												$html ='';
+												$plaintext ='';
 												break;
 											default: //freetext
 												$html = nl2br($arrSections[$section->section_id]);
+												$plaintext = $arrSections[$section->section_id];
 												break;
 										}
 										$tOutput[$c]['html']  = $html;
+										$tOutput[$c]['plaintext']  = $plaintext;
 									} //end if sec->num_rows >0
 									$c++; //counter
 								} //end foreach section
@@ -412,18 +419,31 @@ class Report extends Report_base {
 							
 							//print out the html result:
 							$htmlMail = $this->awe->template_replace_tag($template['header'],'%%reporttitle%%',$aweSettings['awe_txtReportTitle']);
-							
+							$txtMail = $aweSettings['awe_txtReportTitle'].'\r\n';
+							$txtMail .= "========================================\r\n\r\n\r\n";
 							//print out sections:
 							foreach ($tOutput as $sec) {
 								if (!empty($sec['html'])) {
 									$htmlMail .= $this->awe->template_replace_tag($template['section_title'],'%%section_title%%',$sec['title']);
 									$htmlMail .=  $this->awe->template_replace_tag($template['section_content'],'%%section_content%%',$sec['html']);
 								}
+								if (!empty($sec['plaintext'])) {
+									$txtMail .= $sec['title'];
+									$txtMail .= "========================================\r\n";
+									$txtMail .=  $sec['plaintext'];
+									$txtMail .=  "\r\n\r\n";
+								}
 							}
 							$credits = '<div style="font-size: 80%;">Report generated by <a href="https://github.com/mooeypoo/aweSimReport-2.0" target="_blank">aweSimReport Generator.</a></div>';
 							$htmlMail .= $this->awe->template_replace_tag($template['section_content'],'%%section_content%%',$credits);
 							$htmlMail .= $this->awe->template_replace_tag($template['footer'],'%%footer%%',$aweSettings['awe_txtTemplateFooter']);
 
+							$txtMail .=  "--\r\n";
+							$txtMail .=  $aweSettings['awe_txtTemplateFooter'];
+							$txtMail .=  "--\r\n";
+							$txtMail .=  "Report Generated by aweSimReport (https://github.com/mooeypoo/aweSimReport-2.0)\r\n";
+							$txtMail .=  "--\r\n";
+							
 							/** Put this report in the archives **/
 							$dataArray = array(
 									   'CustomSections' => $arrSections,
@@ -489,6 +509,7 @@ class Report extends Report_base {
 							$this->email->to($mailrecipients); 
 							$this->email->subject($mailsubject);
 							$this->email->message($htmlMail);	
+							$this->email->set_alt_message($txtMail);	
 							
 							$this->email->send();
 														
