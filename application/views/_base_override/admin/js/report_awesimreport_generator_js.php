@@ -61,7 +61,7 @@ $(document).ready(function(){
 	
 	$('#save').click(function(){
 	<?php 	if ($this->uri->segment(4) > 0) { ?>
-		var locsave ='<?php echo site_url('report/awesimreport/generator/').$this->uri->segment(4) ?>';
+		var locsave ='<?php echo site_url('report/awesimreport/generator').'/'.$this->uri->segment(4) ?>';
 	<?php	} else {  ?>
 		var locsave ='<?php echo site_url('report/awesimreport/generator/'); ?>';
 	<?php	} ?>

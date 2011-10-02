@@ -46,7 +46,6 @@
 	<?php echo text_output('General Settings', 'h2', 'page-subhead');?>
 	<div class="indent-left">
 		<kbd><?php echo form_label('Date Format:', 'txtDateFormat');?><?php echo form_input($inputs['txtDateFormat']); ?></kbd>
-		<kbd><?php echo form_label('Report Duration:', 'txtReportDuration');?><?php echo form_input($inputs['txtReportDuration']); ?> days.</kbd>
 		<kbd><?php echo form_label('Report Title:', 'txtReportTitle');?><?php echo form_input($inputs['txtReportTitle']); ?></kbd>
 		<kbd><?php echo form_label('Template Footer:', 'txtTemplateFooter');?><br /><?php echo form_textarea($inputs['txtTemplateFooter']); ?></kbd>
 	</div>
@@ -66,7 +65,7 @@
 		<ul>
 			<li><a href="#roster"><span>Roster</span></a></li>
 			<li><a href="#coc"><span>Chain of Command</span></a></li>
-			<li><a href="#simtime"><span>Sim Time</span></a></li>
+	<?php /*	<li><a href="#simtime"><span>Sim Time</span></a></li> */ ?>
 			<li><a href="#stats"><span>Statistics</span></a></li>
 		</ul>
 		
@@ -94,7 +93,7 @@
 				<?php echo form_label('Display Rank Images in COC', 'chkShowRankImagesCOC');?></kbd>
 		</div><!-- coc -->
 
-		<div id='simtime'>
+<?php /*	<div id='simtime'>
 			<?php echo text_output('Sim Time and Duration Settings', 'h3', 'page-subhead');?>
 				<kbd><?php echo form_label('Start Time:', 'txtSimStart');?>
 				<?php echo form_input($inputs['txtSimStart']); ?></kbd>
@@ -102,10 +101,14 @@
 				<?php echo form_input($inputs['txtSimEnd']); ?></kbd>
 		
 		</div> <!-- simtime -->
-
+*/ ?>
 		<div id="stats">
 			<?php echo text_output('Statistics Settings', 'h3', 'page-subhead');?>
-			<?php echo text_output('Coming soon.', 'p', '');?>
+
+			<kbd><?php echo form_label('Report Duration:', 'txtReportDuration');?><?php echo form_input($inputs['txtReportDuration']); ?> days.</kbd>
+			
+			<kbd><?php echo form_label('Number of Occurences to Display:', 'txtStatOccurences');?><?php echo form_input($inputs['txtStatOccurences']); ?></kbd>
+			
 		</div><!-- coc -->
 		
 	</div> <!-- tabs -->

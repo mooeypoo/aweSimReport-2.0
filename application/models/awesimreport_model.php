@@ -290,7 +290,32 @@ class Awesimreport_model extends Model {
 		);
 
 		return $result;
-	} 
+	}
+	
+	function stats_total_logcount($startDate,$endDate) {
+		$countposts = 0;
+		$countlogs = 0;
+		
+		$this->db->from('posts');
+		$this->db->where('post_status', 'activated');
+				
+		$this->db->where('post_date >=', $startDate);
+		$this->db->where('post_date <=', $endDate);
+		
+		$countposts = $this->db->count_all_results();
+		
+		$this->db->from('personallogs');
+		$this->db->where('log_status', 'activated');
+			
+		$this->db->where('log_date >=', $startDate);
+		$this->db->where('log_date <=', $endDate);
+			    
+		$countlogs = $this->db->count_all_results();
+		
+		return $countposts + $countlogs; 
+		
+	}
+
 	/*
 	|---------------------------------------------------------------
 	| CREATE METHODS

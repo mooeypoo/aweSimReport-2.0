@@ -82,6 +82,7 @@ class Report extends Report_base {
 			'awe_txtEmailRecipients',
 			'awe_chkPresenceTags',
 			'awe_txtReportDuration',
+			'awe_txtStatOccurences',
 			'awe_txtPresenceTag_Present',
 			'awe_txtPresenceTag_Unexcused',
 			'awe_txtPresenceTag_Excused',
@@ -203,8 +204,6 @@ class Report extends Report_base {
 								$flash['message'] = text_output($message);
 							}
 							break; //update
-						case 'preview report':
-							break; //generate
 						case 'generate report':
 							//get all variables
 							$tDateStart = $this->input->post('txtReportDateStart', TRUE);
@@ -251,7 +250,6 @@ class Report extends Report_base {
 																//get rank image:
 																$rankdata = $this->ranks->get_rank($charinf->rank, array('rank_name', 'rank_image'));
 																$img_rank = array(
-																/*	'src' => rank_location($this->rank, $item->rank_image, $rank_ext),*/
 																	'src' => rank_location($defaultRankset, $item->rank_image, $rank_ext),
 																	'alt' => $item->rank_name,
 																	'class' => 'image',
@@ -399,10 +397,76 @@ class Report extends Report_base {
 												$plaintext = $out['plain'];
 												break;
 											case 'statistics':
-												//generate stats based on report duration
+												$this->load->plugin('jpgraph');
 												
-												$html ='';
-												$plaintext ='';
+												$sPeriod = $aweSettings['awe_txtReportDuration'];
+												if (empty($sPeriod)) {
+													$sPeriod = 30; //approx a month
+												}
+												$rawStatPeriod = $sPeriod * 86400; //turn into seconds
+												$counter = 0;
+												
+												if ($aweSettings['awe_txtStatOccurences'] < 1) {
+													$repOccurences = 10;
+												} else {
+													$repOccurences = $aweSettings['awe_txtStatOccurences'];
+												}
+								
+												$endDate = now();
+												while ($counter <= $repOccurences) {
+													$startDate = (int)($endDate - $rawStatPeriod);
+													$curr_month = date('n', $endDate);
+								
+													$result[] = $this->awe->stats_total_logcount($startDate, $endDate);
+								
+													$dates[] = $endDate;
+								
+													$endDate = $startDate -1; //next occurence start a month ago, a second earlier
+													$counter++;
+												}
+												
+												$xdata = $dates;
+												$clean_xdata = array_unique($xdata);
+												
+												$xmin = min($dates);
+												$xmax = min($dates);
+												
+												$ydata = $result;
+												
+												$graph = linechart($ydata, $xdata, $xmin,$xmax);  // add more parameters to plugin function as required
+												
+												// Setup title
+												$graph->title->Set('Total Log Count');
+												$graph->xaxis->title->Set('Months');
+												$graph->yaxis->title->Set('Log count');
+								
+												$graph->xaxis->SetLabelFormatString('Mj',true);
+								
+												$graph->xaxis->SetPos('min');
+												$graph->xgrid->Show();
+												
+												// File locations
+												$graph_directory = APPPATH.'assets/images/awesimreport/graphs'; 
+												$graph_url = base_url().'application/assets/images/awesimreport/graphs';
+												
+												if ($id>0) {
+													$graph_file_name = 'stats-repID-'.$id.'.png';
+												} else {
+													$graph_file_name = 'stats-date-'.date('Mj-y').'.png';
+												}
+												
+												$graph_file_location = $graph_directory . '/' . $graph_file_name;
+													
+												$graph->Stroke($graph_file_location);  // create the graph and write to file
+												
+												$imggraph = array(
+													'src' =>  $graph_url.'/'.$graph_file_name,
+													'alt' => 'Graph',
+													'class' => 'image'
+												);
+												
+												$html =img($imggraph);
+												$plaintext ='To view statistics graph, please visit: '.$graph_url.'/'.$graph_file_name;
 												break;
 											default: //freetext
 												$html = nl2br($arrSections[$section->section_id]);
@@ -1133,6 +1197,11 @@ class Report extends Report_base {
 						'name' => 'txtReportDuration',
 						'id' => 'txtReportDuration',
 						'value' => $aweSettings['awe_txtReportDuration']),
+					'txtStatOccurences' => array(
+						'style' => 'width:70px;',
+						'name' => 'txtStatOccurences',
+						'id' => 'txtStatOccurences',
+						'value' => $aweSettings['awe_txtStatOccurences']),
 					'txtTemplateFooter' => array(
 						'rows' => '5',
 						'name' => 'txtTemplateFooter',
@@ -1355,6 +1424,78 @@ class Report extends Report_base {
 				$currpage = 'reports_awesimreport_archive';
 				$currpage_js = 'report_awesimreport_archive_js';
 				break; /* ARCHIVE */
+			case "stats":
+				$this->load->plugin('jpgraph');
+				
+				$sPeriod = $aweSettings['awe_txtReportDuration'];
+				if (empty($sPeriod)) {
+					$sPeriod = 30; //approx a month
+				}
+				$rawStatPeriod = $sPeriod * 86400; //turn into seconds
+				$counter = 0;
+				
+				if ($aweSettings['awe_txtStatOccurences'] < 1) {
+					$repOccurences = 10;
+				} else {
+					$repOccurences = $aweSettings['awe_txtStatOccurences'];
+				}
+
+				$endDate = now();
+				while ($counter <= $repOccurences) {
+					$startDate = (int)($endDate - $rawStatPeriod);
+					$curr_month = date('n', $endDate);
+
+					$result[] = $this->awe->stats_total_logcount($startDate, $endDate);
+
+					$dates[] = $endDate;
+
+					$endDate = $startDate -1; //next occurence start a month ago, a second earlier
+					$counter++;
+				}
+				
+				$xdata = $dates;
+				$clean_xdata = array_unique($xdata);
+				
+				$xmin = min($dates);
+				$xmax = min($dates);
+				
+				$ydata = $result;
+				
+				$graph = linechart($ydata, $xdata, $xmin,$xmax);  // add more parameters to plugin function as required
+				
+				// Setup title
+				$graph->title->Set('Total Log Count');
+				$graph->xaxis->title->Set('Months');
+				$graph->yaxis->title->Set('Log count');
+
+				$graph->xaxis->SetLabelFormatString('Mj',true);
+
+				$graph->xaxis->SetPos('min');
+				$graph->xgrid->Show();
+				
+				// File locations
+				$graph_directory = APPPATH.'assets/images/awesimreport/graphs'; 
+				$graph_url = base_url().'application/assets/images/awesimreport/graphs';
+
+				$graph_file_name = 'stats.png';    
+				
+				$graph_file_location = $graph_directory . '/' . $graph_file_name;
+					
+				$graph->Stroke($graph_file_location);  // create the graph and write to file
+				
+				$data['imggraph'] = array(
+					'src' =>  $graph_url.'/'.$graph_file_name,
+					'alt' => 'Graph',
+					'class' => 'image'
+				);
+				
+				/** SETUP VIEW **/
+				$data['header'] = 'aweSimReport: Stats';
+				
+				$currpage = 'reports_awesimreport_stats';
+				$currpage_js = 'report_awesimreport_stats_js';
+				
+				break;
 		} /* END SWITCH URI SEGMENT */
 
 		/** DISPLAY VIEW **/

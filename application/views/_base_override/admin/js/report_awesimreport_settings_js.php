@@ -15,6 +15,7 @@ $(document).ready(function(){
 	$('.button-main').live('click', function() {
 		var awe_txtDateFormat = $('#txtDateFormat').val();
 		var awe_txtReportDuration = $('#txtReportDuration').val();
+		var awe_txtStatOccurences = $('#txtStatOccurences').val();
 		var awe_txtEmailSubject = $('#txtEmailSubject').val();
 		var awe_txtEmailRecipients = $('#txtEmailRecipients').val();
 		var awe_txtReportTitle = $('#txtReportTitle').val();
@@ -35,6 +36,7 @@ $(document).ready(function(){
 			data: { 
 				txtDateFormat: awe_txtDateFormat,
 				txtReportDuration: awe_txtReportDuration,
+				txtStatOccurences: awe_txtStatOccurences,
 				txtReportTitle: awe_txtReportTitle,
 				txtEmailSubject: awe_txtEmailSubject,
 				txtEmailRecipients: awe_txtEmailRecipients,

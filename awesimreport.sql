@@ -139,6 +139,7 @@ INSERT INTO `nova_settings` (`setting_key`, `setting_value`, `setting_label`, `s
 ('awe_txtPresenceTag_Excused', 'E', 'aweSimReport - Presence Tags (Excused absence)', 'y'),
 ('awe_chkShowRankImagesRoster', 'checked', 'aweSimReport - Display Rank Images', 'y'),
 ('awe_txtReportDuration', '14', 'aweSimReport - Report Duration', 'y'),
+('awe_txtStatOccurences', '15', 'aweSimReport - Number of Occurences on the Statistics Graph', 'y'),
 ('awe_chkShowRankImagesCOC', 'checked', 'aweSimReport - Show Rank Images for COC', 'y'),
 ('awe_txtReportTitle', 'Sim Report for USS Awesome', 'aweSimReport - Report Title', 'y'),
 ('awe_ActiveTemplate', '3', 'aweSimReport - Active Template', 'y');
