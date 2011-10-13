@@ -365,7 +365,6 @@ class Ajax extends Ajax_base {
 								$curr_month = date('n', $endDate);
 			
 								$result[] = $this->awe->stats_total_logcount($startDate, $endDate);
-			
 								$dates[] = $endDate;
 			
 								$endDate = $startDate -1; //next occurence start a month ago, a second earlier
@@ -396,7 +395,7 @@ class Ajax extends Ajax_base {
 							$graph_directory = APPPATH.'assets/images/awesimreport/graphs'; 
 							$graph_url = base_url().'application/assets/images/awesimreport/graphs';
 							
-							$graph_file_name = 'stats-repID-'.$id.'.png';
+							$graph_file_name = 'stats-preview.png';
 							
 							$graph_file_location = $graph_directory . '/' . $graph_file_name;
 								

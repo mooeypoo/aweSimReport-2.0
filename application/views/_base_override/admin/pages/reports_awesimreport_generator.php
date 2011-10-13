@@ -100,7 +100,7 @@
 				<?php
 					foreach ($characters as $dept) {
 						if ((isset($dept['chars'])) && (count($dept['chars'])>0)) {	?>
-							<tr><th colspan="5"><?php echo strtoupper($dept['deptname']);?></th></tr>
+							<tr><th colspan="5" class="roster_deptname"><?php echo $dept['deptname'];?></th></tr>
 				<?php		foreach ($dept['chars'] as $char) { ?>
 
 								<tr>
@@ -141,32 +141,41 @@
 							if ((isset($dept['subdept'])) && (count($dept['subdept'])>0)) {
 								foreach ($dept['subdept'] as $subdept) {
 									if ((isset($subdept['chars'])) && (count($subdept['chars'])>0)) {	?>
-										<tr><th colspan="5"><?php echo strtoupper($subdept['deptname']);?></th></tr>
+										<tr><th colspan="5" class="roster_deptname"><?php echo $subdept['deptname'];?></th></tr>
 							<?php		foreach ($subdept['chars'] as $char) { ?>
-									<tr>
-										<td>
-											<?php if ($char['loa'] == '[LOA]'): ?>
-												<?php echo text_output($char['loa'], 'span', 'red fontSmall bold');?>
-											<?php elseif ($char['loa'] == '[ELOA]'): ?>
-												<?php echo text_output($char['loa'], 'span', 'orange fontSmall bold');?>
-											<?php endif;?>
-											
-											<?php echo text_output($char['char_name'], 'span', 'bold');?><br />
-											<span class="fontTiny">
-												<?php echo anchor('personnel/user/'. $char['id'], 'User Account');?>
-												|
-												<?php echo anchor('personnel/character/'. $char['charid'], 'Character Bio');?>
-											</span>
-										</td>
-										<td class="fontTiny nobold">(<?php print $char['position']; ?>)</td>
-								<?php		if (($char['loa'] == '[LOA]') || ($char['loa'] == '[ELOA]')) { ?>
-											<td align="center" valign="middle" colspan="3"><?php print $char['loa']; ?></td>
-								<?php		} else { ?>
-											<td align="center" valign="middle"><?php echo form_radio($radAttendance[$char['charid']]['U']); ?></td>
-											<td align="center" valign="middle"><?php echo form_radio($radAttendance[$char['charid']]['E']); ?></td>
-											<td align="center" valign="middle"><?php echo form_radio($radAttendance[$char['charid']]['P']); ?></td>
-								<?php		} ?>
-										</tr>
+										<tr>
+											<td>
+											<?php echo form_checkbox($chkRosterShowUsers[$char['id']]); ?>
+											</td>
+		<?php							if (($roster['ShowRankImages']) == 'checked') { ?>
+											<td><?php echo img($char['rank_img']); ?></td>
+		<?php							} ?>
+											<td>
+												<?php if ($char['loa'] == '[LOA]'): ?>
+													<?php echo text_output($char['loa'], 'span', 'red fontSmall bold');?>
+												<?php elseif ($char['loa'] == '[ELOA]'): ?>
+													<?php echo text_output($char['loa'], 'span', 'orange fontSmall bold');?>
+												<?php endif;?>
+
+												<?php echo text_output($char['char_name'], 'span', 'bold');?><br />
+												<span class="fontTiny">
+													<?php echo anchor('personnel/user/'. $char['id'], 'User Account');?>
+													|
+													<?php echo anchor('personnel/character/'. $char['charid'], 'Character Bio');?>
+												</span>
+											</td>
+											<td class="fontTiny nobold">(<?php print $char['position']; ?>)</td>
+		<?php				 				if ($roster['UseTags'] == 'checked') { ?>					
+										<?php		if (($char['loa'] == '[LOA]') || ($char['loa'] == '[ELOA]')) { ?>
+													<td align="center" valign="middle" colspan="3"><?php print $char['loa']; ?></td>
+										<?php		} else { ?>
+
+														<td align="center" valign="middle"><?php echo form_radio($radAttendance[$char['charid']]['U']); ?></td>
+													<td align="center" valign="middle"><?php echo form_radio($radAttendance[$char['charid']]['E']); ?></td>
+													<td align="center" valign="middle"><?php echo form_radio($radAttendance[$char['charid']]['P']); ?></td>
+										<?php		}	?>									
+		<?php								} ?>						
+											</tr>
 				<?php 					} //end foreach - character per subdept	?>			
 	<?php							} //end if - subdept has characters
 								}

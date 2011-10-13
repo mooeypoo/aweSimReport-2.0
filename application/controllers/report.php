@@ -418,7 +418,6 @@ class Report extends Report_base {
 													$curr_month = date('n', $endDate);
 								
 													$result[] = $this->awe->stats_total_logcount($startDate, $endDate);
-								
 													$dates[] = $endDate;
 								
 													$endDate = $startDate -1; //next occurence start a month ago, a second earlier
@@ -449,7 +448,7 @@ class Report extends Report_base {
 												$graph_directory = APPPATH.'assets/images/awesimreport/graphs'; 
 												$graph_url = base_url().'application/assets/images/awesimreport/graphs';
 												
-												if ($id>0) {
+												if ((int)($id) > 0) {
 													$graph_file_name = 'stats-repID-'.$id.'.png';
 												} else {
 													$graph_file_name = 'stats-date-'.date('Mj-y').'.png';
@@ -805,19 +804,16 @@ class Report extends Report_base {
 							if ($p->loa == 'active') {
 								$data['radAttendance'][$p->main_char] = array(
 									'U' => array(
-								/*		'name' => 'rAttendance['.$p->main_char.']',*/
 										'name' => 'rAttendance['.$p->main_char.']',
-										'checked' => 'checked',
 										'id' => 'rAttendance['.$p->main_char.']',
 										'value' => 'U'),
 									'E' => array(
-								/*		'name' => 'rAttendance['.$p->main_char.']',*/
 										'name' => 'rAttendance['.$p->main_char.']',
 										'id' => 'rAttendance['.$p->main_char.']',
 										'value' => 'E'),
 									'P' => array(
-								/*		'name' => 'rAttendance['.$p->main_char.']',*/
 										'name' => 'rAttendance['.$p->main_char.']',
+										'checked' => 'checked',
 										'id' => 'rAttendance['.$p->main_char.']',
 										'value' => 'P')
 								);

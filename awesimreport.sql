@@ -77,8 +77,7 @@ INSERT INTO `nova_awe_section_order` (`section_id`, `section_order`) VALUES
 (17, 1),
 (8, 2),
 (9, 3),
-(11, 4),
-(15, 5);
+(11, 4);
 
 -- --------------------------------------------------------
 

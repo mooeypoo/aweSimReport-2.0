@@ -1,3 +1,5 @@
+
+
 #awe_mainmenu {
 	margin-left: auto;
 	margin-right: auto;
@@ -245,4 +247,8 @@ a.savedreport.selected {
 					#4D0B1B 20%,
 					#3B0412 100%
 				);	
+}
+
+.roster_deptname {
+	text-transform:uppercase;
 }
