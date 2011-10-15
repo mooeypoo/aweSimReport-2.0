@@ -30,7 +30,8 @@
                 margin: 0;
                 padding: 0;
             }
-        </style>
+	    .roster .dept { text-transform:uppercase; }
+	</style>
 		<!--[if gte mso 9]>
 		<style type="text/css">
 		.transparent{ background-color: #dfe4e9; background-image: url('images/article-bg.jpg'); }

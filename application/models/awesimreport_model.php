@@ -240,7 +240,7 @@ class Awesimreport_model extends Model {
 		
 		foreach ($charsArray as $dept) {
 			if ((isset($dept['chars'])) && (count($dept['chars'])>0)) {	
-				$output .= '<tr><td colspan="5"align="center" class="dept"><span style="margin-top:3px; margin-bottom: 3px; font-weight:bold;">'.strtoupper($dept['deptname']).'</span></td></tr>';
+				$output .= '<tr><td colspan="5"align="center" class="dept"><span style="margin-top:3px; margin-bottom: 3px; font-weight:bold;">'.$dept['deptname'].'</span></td></tr>';
 				foreach ($dept['chars'] as $char) {
 					$output .= '<tr>';
 					if ($useRanks == 'checked') {

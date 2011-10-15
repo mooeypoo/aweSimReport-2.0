@@ -17,6 +17,7 @@ a, td a, a:link { color: #61C7DD !important; }
 td a:hover, a:hover { color: #59B8CC !important; }
 ul { margin-left: 0; padding-left: 0; list-style: none; }
 ul li { padding-left: 12px; background-image: url(%%images%%/bg_bullet.png); background-repeat:	no-repeat; background-position: 0 50%; }
+.roster .dept { text-transform:uppercase; }
 </style>
 </head>
 <body bgcolor="#161616" leftmargin="0" topmargin="0" marginwidth="0" marginheight="0">

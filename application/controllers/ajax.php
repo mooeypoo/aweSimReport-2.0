@@ -344,7 +344,9 @@ class Ajax extends Ajax_base {
 							$html = $out['html'];
 							break;
 						case 'statistics':
-							$this->load->plugin('jpgraph');
+
+							$dates = Array();
+							$result = Array();
 							
 							$sPeriod = $aweSettings['awe_txtReportDuration'];
 							if (empty($sPeriod)) {
@@ -363,50 +365,50 @@ class Ajax extends Ajax_base {
 							while ($counter <= $repOccurences) {
 								$startDate = (int)($endDate - $rawStatPeriod);
 								$curr_month = date('n', $endDate);
-			
-								$result[] = $this->awe->stats_total_logcount($startDate, $endDate);
-								$dates[] = $endDate;
+								
+								$result[] = $this->awe->stats_total_logcount($startDate, $endDate) + 1;
+								
+								$dates[] = date('Mj', $endDate);;
 			
 								$endDate = $startDate -1; //next occurence start a month ago, a second earlier
 								$counter++;
 							}
 							
-							$xdata = $dates;
-							$clean_xdata = array_unique($xdata);
-							
-							$xmin = min($dates);
-							$xmax = min($dates);
-							
-							$ydata = $result;
-							
-							$graph = linechart($ydata, $xdata, $xmin,$xmax);  // add more parameters to plugin function as required
-							
-							// Setup title
-							$graph->title->Set('Total Log Count');
-							$graph->xaxis->title->Set('Months');
-							$graph->yaxis->title->Set('Log count');
+							$maxval = max($result);
 			
-							$graph->xaxis->SetLabelFormatString('Mj',true);
-			
-							$graph->xaxis->SetPos('min');
-							$graph->xgrid->Show();
-							
-							// File locations
-							$graph_directory = APPPATH.'assets/images/awesimreport/graphs'; 
-							$graph_url = base_url().'application/assets/images/awesimreport/graphs';
-							
-							$graph_file_name = 'stats-preview.png';
-							
-							$graph_file_location = $graph_directory . '/' . $graph_file_name;
+							$newresult = Array();
+							foreach ($result as $sig) {
+								//turn it into percentages:
+								$newresult[] = ($sig / $maxval) * 100;
+							}
 								
-							$graph->Stroke($graph_file_location);  // create the graph and write to file
-							
+							$data['dates'] = $dates;
+							$data['result'] = $newresult;
+			
+							$halfmaxvalue = $maxval / 2;
+								
+							$imgsrc  = "http://chart.apis.google.com/chart?";
+							$imgsrc .= "chxl=0:|".implode('|',$dates);
+							$imgsrc .= "&chxr=0,0,0|1,0,".(int)($maxval);
+							$imgsrc .= "&chxs=0,AA0033,11.5,0,lt,676767|1,676767,11.5,0,lt,676767";
+							$imgsrc .= "&chxt=x,y";
+							$imgsrc .= "&chbh=a,5";
+							$imgsrc .= "&chs=500x400";
+							$imgsrc .= "&cht=bvg";
+							$imgsrc .= "&chd=t:". implode(',',$newresult);
+							$imgsrc .= "&chds=a";
+							$imgsrc .= "&chdlp=b";
+							$imgsrc .= "&chp=0";
+							$imgsrc .= "&chg=10,10,0,9";
+							$imgsrc .= "&chma=5";
+							$imgsrc .= "&chtt=Total+Log+Count";
+			
+			
 							$imggraph = array(
-								'src' =>  $graph_url.'/'.$graph_file_name,
-								'alt' => 'Graph',
+								'src' =>  $imgsrc,
+								'alt' => 'Total Log Count',
 								'class' => 'image'
 							);
-							
 							$html =img($imggraph);
 							break;
 						default: //freetext

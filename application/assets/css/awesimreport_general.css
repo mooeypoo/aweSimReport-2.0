@@ -249,6 +249,4 @@ a.savedreport.selected {
 				);	
 }
 
-.roster_deptname {
-	text-transform:uppercase;
-}
+.roster_deptname, .dept { text-transform:uppercase; }

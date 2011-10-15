@@ -38,6 +38,9 @@
 
 <?php echo img($imggraph); ?>
 
+<hr />
+<?php echo print_r($result); ?>
+
 
 <br />
 

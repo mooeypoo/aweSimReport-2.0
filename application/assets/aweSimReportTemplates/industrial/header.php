@@ -25,7 +25,7 @@
 	ul { margin-left: 0; padding-left: 0; list-style: none; }
 	ul li { padding-left: 14px; background-image: url(%%images%%/bg_bullet.jpg); background-repeat:	no-repeat; background-position: 0 50%; }
 	.roster, .coctable { font-size: 14px; }
-	.roster .dept { background: #333; padding-top:2px; padding-bottom: 2px;margin-bottom:2px; margin-top: 2px; }
+	.roster .dept { background: #333; padding-top:2px; padding-bottom: 2px;margin-bottom:2px; margin-top: 2px; text-transform:uppercase; }
 	.roster td { padding-top: 2px; padding-bottom: 2px;}
 	</style>
   </head>
