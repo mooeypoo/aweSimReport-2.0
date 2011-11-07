@@ -48,6 +48,7 @@ $(document).ready(function(){
 			alert('The Email settings you have provided are insufficient. Please go to "Settings" and choose an Email Subject and Email Recepients.');
 			return false;
 <?php	} ?>
+		genMessage += 'Email From: <?php print $email['myname'].'<'.$email['myaddress'].'>'; ?>\n';
 		genMessage += 'Email Recepients: <?php print implode(', ',$email["mailrecipients"]); ?>\n';
 		genMessage += 'Email Subject: <?php print $email["mailsubject"]; ?>\n\n';
 		genMessage += 'Are you sure you want to generate and send this report?';

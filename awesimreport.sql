@@ -125,6 +125,7 @@ INSERT INTO `nova_menu_items` (`menu_name`, `menu_group`, `menu_order`, `menu_li
 --
 
 INSERT INTO `nova_settings` (`setting_key`, `setting_value`, `setting_label`, `setting_user_created`) VALUES
+('awe_version', '1.0.0', 'aweSimReport - Version', 'y'),
 ('awe_txtSimStart', '10:00pm', 'aweSimReport - Sim Start', 'y'),
 ('awe_txtSimEnd', '11:00pm', 'aweSimReport - Sim End', 'y'),
 ('awe_txtTemplateFooter', 'Thank you for participating in USS Awesime game. For more information, please see our website..', 'aweSimReport - Template Footer', 'y'),

@@ -95,10 +95,10 @@ class Report extends Report_base {
 		$aweSettings = $this->settings->get_settings($settings_array);
 
 			//info about email:
-		$uid = $this->session->userdata('userid');
-		$charid = $this->user->get_main_character($uid);
+		$mail_uid = $this->session->userdata('userid');
+		$charid = $this->user->get_main_character($mail_uid);
 							
-		$myaddress = $this->user->get_email_address($uid);
+		$myaddress = $this->user->get_email_address($mail_uid);
 		$myname = $this->char->get_character_name($charid, TRUE);
 		$mailsubject = $aweSettings['awe_txtEmailSubject'];
 		$mailrecipients = explode(',',$aweSettings['awe_txtEmailRecipients']);
