@@ -32,28 +32,8 @@
 <div id="saving" class="hidden"><?php echo img($images['loading']);?><?php echo 'Processing...';?>...</div>
 <div id='ajaxnotice' class='hidden'></div>
 
-<?php
-
-	print_r($awe_tags);
-	print "<hr />";
-	//print nl2br($awe_changelog);
-	//print "<hr />";
-
-	if (isset($awe_repo)) {
-?>
-	<div class="awe_update">
-		<h2>Latest version: <?php print $awe_last_tag; ?></h2>
-		<p><strong>LATEST MESSAGE:</strong> <?php print $awe_commits[0]['message']; ?></p>
-	</div>
-<?php
-	}
-?>
-
-
-
 
 <br />
-	<?php //print_r($savedReports); ?>
 	<div id='savedReports'>
 <?php	if (count($savedReports)>0) {
 		foreach ($savedReports as $key => $val) {
